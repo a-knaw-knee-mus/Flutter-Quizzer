@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/data/question.dart';
 import 'package:flutter_quizzer/data/quiz.dart';
-import 'package:flutter_quizzer/screens/new_quiz_screen.dart';
 import 'package:flutter_quizzer/screens/profile_screen.dart';
 import 'package:flutter_quizzer/screens/quizzes_screen.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 void main() async {
   // Hive init
@@ -40,7 +40,6 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   List<Widget> pageList = [
     const QuizzesScreen(),
-    const NewQuizScreen(),
     const ProfileScreen(),
   ];
   int _currentPage = 0;
@@ -49,27 +48,19 @@ class _MyPageState extends State<MyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: pageList[_currentPage],
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Quiz Sets',
+      bottomNavigationBar: SalomonBottomBar(
+        currentIndex: _currentPage,
+        onTap: (i) => setState(() => _currentPage = i),
+        items: [
+          SalomonBottomBarItem(
+            icon: const Icon(Icons.home),
+            title: const Text('Your Quizzes'),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle),
-            label: 'New Quiz Set',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+          SalomonBottomBarItem(
+            icon: const Icon(Icons.person),
+            title: const Text('Profile'),
           ),
         ],
-        currentIndex: _currentPage,
-        onTap: (value) {
-          setState(() {
-            _currentPage = value;
-          });
-        },
       ),
     );
   }
