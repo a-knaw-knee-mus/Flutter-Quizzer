@@ -16,7 +16,7 @@ class Quiz {
   String name;
 
   @HiveField(1)
-  bool description;
+  String description;
 
   @HiveField(2)
   DateTime createdAt;

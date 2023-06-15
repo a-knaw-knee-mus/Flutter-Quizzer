@@ -9,14 +9,11 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Profile Screen'),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Navigate to screen that extracts arguments'),
-            ),
+            Text('Profile Page'),
           ],
         ),
       ),

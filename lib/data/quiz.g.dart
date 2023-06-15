@@ -18,7 +18,7 @@ class QuizAdapter extends TypeAdapter<Quiz> {
     };
     return Quiz(
       name: fields[0] as String,
-      description: fields[1] as bool,
+      description: fields[1] as String,
       createdAt: fields[2] as DateTime,
       updatedAt: fields[3] as DateTime,
     );
