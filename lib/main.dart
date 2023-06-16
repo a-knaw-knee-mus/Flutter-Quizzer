@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
       title: 'Navigation with Arguments',
       home: const MyPage(),
       theme: ThemeData(primarySwatch: Colors.purple),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

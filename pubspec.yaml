@@ -39,6 +39,7 @@ dependencies:
   hive_flutter: ^1.1.0
   uuid: ^3.0.6
   salomon_bottom_bar: ^3.3.2
+  flutter_slidable: ^1.2.0
 
 dev_dependencies:
   flutter_test:

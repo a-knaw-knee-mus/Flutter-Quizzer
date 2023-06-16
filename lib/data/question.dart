@@ -17,7 +17,7 @@ class Question {
   String term;
 
   @HiveField(1)
-  bool definition;
+  String definition;
 
   @HiveField(2)
   String quizId;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/data/quiz.dart';
 import 'package:flutter_quizzer/screens/new_quiz_screen.dart';
+import 'package:flutter_quizzer/screens/quiz_screen.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
@@ -15,7 +16,6 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
   final quizBox = Hive.box<Quiz>('quizBox');
 
   void saveNewQuiz(quizName, quizDesc) {
-    final quizBox = Hive.box<Quiz>('quizBox');
     String uuid = const Uuid().v1();
 
     setState(() {
@@ -56,26 +56,35 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
       body: ListView.builder(
         itemCount: quizBox.length,
         itemBuilder: (context, index) {
-          final quizId = quizBox.keyAt(index);
+          final quizId = quizBox.keyAt(index)!;
           final quiz = quizBox.getAt(index)!;
 
           return Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(top: 20.0, right: 20.0, left: 20.0),
             child: GestureDetector(
               onTap: () {
-                print('click box $quizId');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return QuizScreen(quizId: quizId);
+                  }),
+                );
               },
-              child: Container(
+              child: Card(
+                elevation: 12,
                 color: Colors.amber,
-                height: 50,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(quiz.name),
-                    Text(quiz.description),
-                    Text(quiz.createdAt.toString()),
-                    Text(quiz.updatedAt.toString()),
-                  ],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: SizedBox(
+                  height: 50,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text('Name: ${quiz.name}'),
+                      Text('Desc: ${quiz.description}'),
+                    ],
+                  ),
                 ),
               ),
             ),

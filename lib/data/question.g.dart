@@ -18,7 +18,7 @@ class QuestionAdapter extends TypeAdapter<Question> {
     };
     return Question(
       term: fields[0] as String,
-      definition: fields[1] as bool,
+      definition: fields[1] as String,
       quizId: fields[2] as String,
       createdAt: fields[3] as DateTime,
       updatedAt: fields[4] as DateTime,
