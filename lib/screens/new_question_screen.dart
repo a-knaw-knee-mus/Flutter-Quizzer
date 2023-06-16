@@ -36,7 +36,7 @@ class NewQuestionDialog extends StatelessWidget {
           milliseconds: 1500,
         ),
         showCloseIcon: true,
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.green,
       ),
     );
   }

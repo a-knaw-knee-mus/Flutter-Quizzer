@@ -13,7 +13,6 @@ void main() async {
   await Hive.openBox<Quiz>('quizBox');
   Hive.registerAdapter(QuestionAdapter());
   await Hive.openBox<Question>('questionBox');
-
   runApp(const MyApp());
 }
 

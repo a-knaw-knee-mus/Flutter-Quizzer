@@ -1,3 +1,4 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 
 class NewQuizDialog extends StatelessWidget {
@@ -30,7 +31,7 @@ class NewQuizDialog extends StatelessWidget {
           milliseconds: 1500,
         ),
         showCloseIcon: true,
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.green,
       ),
     );
   }
