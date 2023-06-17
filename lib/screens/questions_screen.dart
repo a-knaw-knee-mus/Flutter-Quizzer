@@ -1,8 +1,10 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/util/form_types.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/question_dialog_screen.dart';
+import 'package:flutter_quizzer/util/sort_question.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -20,6 +22,7 @@ class _QuizScreenState extends State<QuizScreen> {
   final quizBox = Hive.box<Quiz>('quizBox');
   late final Quiz quiz = quizBox.get(widget.quizId)!;
   final questionBox = Hive.box<Question>('questionBox');
+  QuestionSortType sortType = QuestionSortType.termAsc;
 
   void saveNewQuestion(
     String term,
@@ -118,6 +121,36 @@ class _QuizScreenState extends State<QuizScreen> {
                 )),
           ],
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton2(
+                hint: sortType.getDisplayWidget(Colors.white),
+                iconStyleData: const IconStyleData(
+                  iconEnabledColor: Colors.white,
+                  icon: Icon(Icons.sort),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                onChanged: (QuestionSortType? newSortType) {
+                  setState(() {
+                    sortType = newSortType!;
+                  });
+                },
+                items: QuestionSortType.values.map((QuestionSortType s) {
+                  return DropdownMenuItem(
+                    value: s,
+                    child: s.getDisplayWidget(Colors.black),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         label: const Text('New Question'),
@@ -130,7 +163,8 @@ class _QuizScreenState extends State<QuizScreen> {
       body: ValueListenableBuilder(
         valueListenable: Hive.box<Question>('questionBox').listenable(),
         builder: (context, questions, _) {
-          final List questionKeys = questions.keys.where((key) {
+          final List sortedIds = sortType.sortQuestionIds(questions);
+          final List questionKeys = sortedIds.where((key) {
             Question question = questionBox.get(key)!;
             if (question.quizId == widget.quizId) {
               return true;

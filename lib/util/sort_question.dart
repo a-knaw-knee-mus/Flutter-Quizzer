@@ -1,58 +1,58 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quizzer/schema/quiz.dart';
+import 'package:flutter_quizzer/schema/question.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-enum QuizSortType {
-  nameAsc,
-  nameDesc,
+enum QuestionSortType {
+  termAsc,
+  termDesc,
   createdDateAsc,
   createdDateDesc,
   updatedDateAsc,
   updatedDateDesc,
 }
 
-extension QuizSortExtension on QuizSortType {
+extension QuestionSortExtension on QuestionSortType {
   String get name => describeEnum(this);
 
   Widget getDisplayWidget(Color textColor) {
     switch (this) {
-      case QuizSortType.nameAsc:
+      case QuestionSortType.termAsc:
         return Row(
           children: [
             const Icon(Icons.arrow_upward_rounded),
-            Text(' Name', style: TextStyle(color: textColor)),
+            Text(' Term', style: TextStyle(color: textColor)),
           ],
         );
-      case QuizSortType.nameDesc:
+      case QuestionSortType.termDesc:
         return Row(
           children: [
             const Icon(Icons.arrow_downward_rounded),
-            Text(' Name', style: TextStyle(color: textColor)),
+            Text(' Term', style: TextStyle(color: textColor)),
           ],
         );
-      case QuizSortType.createdDateAsc:
+      case QuestionSortType.createdDateAsc:
         return Row(
           children: [
             const Icon(Icons.arrow_upward_rounded),
             Text(' Created Date', style: TextStyle(color: textColor)),
           ],
         );
-      case QuizSortType.createdDateDesc:
+      case QuestionSortType.createdDateDesc:
         return Row(
           children: [
             const Icon(Icons.arrow_downward_rounded),
             Text(' Created Date', style: TextStyle(color: textColor)),
           ],
         );
-      case QuizSortType.updatedDateAsc:
+      case QuestionSortType.updatedDateAsc:
         return Row(
           children: [
             const Icon(Icons.arrow_upward_rounded),
             Text(' Updated Date', style: TextStyle(color: textColor)),
           ],
         );
-      case QuizSortType.updatedDateDesc:
+      case QuestionSortType.updatedDateDesc:
         return Row(
           children: [
             const Icon(Icons.arrow_downward_rounded),
@@ -69,38 +69,38 @@ extension QuizSortExtension on QuizSortType {
     }
   }
 
-  List sortQuizIds(Box<Quiz> quizzes) {
-    return quizzes.keys.toList()
+  List sortQuestionIds(Box<Question> questions) {
+    return questions.keys.toList()
       ..sort((a, b) {
-        Quiz quizA = quizzes.get(a)!;
-        Quiz quizB = quizzes.get(b)!;
+        Question quizA = questions.get(a)!;
+        Question quizB = questions.get(b)!;
 
         switch (this) {
-          case (QuizSortType.nameAsc):
+          case (QuestionSortType.termAsc):
             {
-              return quizA.name
+              return quizA.term
                   .toLowerCase()
-                  .compareTo(quizB.name.toLowerCase());
+                  .compareTo(quizB.term.toLowerCase());
             }
-          case (QuizSortType.nameDesc):
+          case (QuestionSortType.termDesc):
             {
-              return quizB.name
+              return quizB.term
                   .toLowerCase()
-                  .compareTo(quizA.name.toLowerCase());
+                  .compareTo(quizA.term.toLowerCase());
             }
-          case (QuizSortType.createdDateAsc):
+          case (QuestionSortType.createdDateAsc):
             {
               return quizB.createdAt.compareTo(quizA.createdAt);
             }
-          case (QuizSortType.createdDateDesc):
+          case (QuestionSortType.createdDateDesc):
             {
               return quizA.createdAt.compareTo(quizB.createdAt);
             }
-          case (QuizSortType.updatedDateAsc):
+          case (QuestionSortType.updatedDateAsc):
             {
               return quizB.updatedAt.compareTo(quizA.updatedAt);
             }
-          case (QuizSortType.updatedDateDesc):
+          case (QuestionSortType.updatedDateDesc):
             {
               return quizA.updatedAt.compareTo(quizB.updatedAt);
             }

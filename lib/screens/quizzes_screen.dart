@@ -149,7 +149,7 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
               child: ValueListenableBuilder(
                   valueListenable: Hive.box<Quiz>('quizBox').listenable(),
                   builder: (context, quizzes, _) {
-                    List sortedIds = sortType.sortQuizIds(quizzes);
+                    final List sortedIds = sortType.sortQuizIds(quizzes);
                     return ListView.builder(
                       itemCount: sortedIds.length,
                       itemBuilder: (context, index) {
