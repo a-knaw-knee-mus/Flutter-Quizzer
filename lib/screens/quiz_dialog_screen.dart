@@ -3,17 +3,21 @@ import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/types/form_types.dart';
 
 class QuizDialog extends StatefulWidget {
-  final void Function(String, String, {String? quizId, DateTime? ogCreatedAt}) saveQuiz;
   final BuildContext context;
+  final void Function(String, String) saveNewQuiz;
+  final void Function(String, String, String, DateTime) editQuiz;
   final FormType formType;
+  // for edited quizzes
   final Quiz? quiz;
   final String? quizId;
 
   const QuizDialog({
     super.key,
-    required this.saveQuiz,
     required this.context,
     required this.formType,
+    required this.saveNewQuiz,
+    required this.editQuiz,
+    // for edited quizzes
     this.quizId,
     this.quiz,
   });
@@ -24,9 +28,7 @@ class QuizDialog extends StatefulWidget {
 
 class _QuizDialogState extends State<QuizDialog> {
   final _quizNameController = TextEditingController();
-
   final _quizDescController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -76,12 +78,19 @@ class _QuizDialogState extends State<QuizDialog> {
     if (!_formKey.currentState!.validate()) return;
 
     // Form submit
-    widget.saveQuiz(
-      _quizNameController.text,
-      _quizDescController.text,
-      quizId: widget.quizId,
-      ogCreatedAt: widget.quiz?.createdAt,
-    );
+    switch (widget.formType) {
+      case FormType.create: {
+        widget.saveNewQuiz(_quizNameController.text, _quizDescController.text,);
+        break;
+      }
+      case FormType.edit: {
+        widget.editQuiz(_quizNameController.text, _quizDescController.text, widget.quizId!, widget.quiz!.createdAt,);
+        break;
+      }
+      default: {
+        throw 'Invalid form type';
+      }
+    }
 
     // Form reset
     _quizNameController.clear();

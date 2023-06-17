@@ -3,19 +3,23 @@ import 'package:flutter_quizzer/types/form_types.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 
 class QuestionDialog extends StatefulWidget {
-  final void Function(String, String, {String? questionId, DateTime? ogCreatedAt}) saveQuestion;
-  final String quizName;
   final BuildContext context;
+  final void Function(String, String) saveNewQuestion;
+  final void Function(String, String, String, DateTime) editQuestion;
+  final String quizName;
   final FormType formType;
+  // for edited questions
   final Question? question;
   final String? questionId;
 
   const QuestionDialog({
     super.key,
-    required this.saveQuestion,
     required this.quizName,
     required this.context,
     required this.formType,
+    required this.saveNewQuestion,
+    required this.editQuestion,
+    // for edited questions
     this.question,
     this.questionId,
   });
@@ -26,9 +30,7 @@ class QuestionDialog extends StatefulWidget {
 
 class _QuestionDialogState extends State<QuestionDialog> {
   final _questionTermController = TextEditingController();
-
   final _questionDefinitionController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -78,12 +80,30 @@ class _QuestionDialogState extends State<QuestionDialog> {
     if (!_formKey.currentState!.validate()) return;
 
     // Form submit
-    widget.saveQuestion(
-      _questionTermController.text,
-      _questionDefinitionController.text,
-      questionId: widget.questionId,
-      ogCreatedAt: widget.question?.createdAt,
-    );
+    switch (widget.formType) {
+      case FormType.create:
+        {
+          widget.saveNewQuestion(
+            _questionTermController.text,
+            _questionDefinitionController.text,
+          );
+          break;
+        }
+      case FormType.edit:
+        {
+          widget.editQuestion(
+            _questionTermController.text,
+            _questionDefinitionController.text,
+            widget.questionId!,
+            widget.question!.createdAt,
+          );
+          break;
+        }
+      default:
+        {
+          throw 'Invalid form type';
+        }
+    }
 
     // Form reset
     _questionTermController.clear();

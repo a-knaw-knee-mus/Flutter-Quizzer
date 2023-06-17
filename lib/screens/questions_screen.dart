@@ -21,35 +21,30 @@ class _QuizScreenState extends State<QuizScreen> {
   late final Quiz quiz = quizBox.get(widget.quizId)!;
   final questionBox = Hive.box<Question>('questionBox');
 
-  // creating a new question or editing a question
-  // TODO: updatedAt should be fixed
-  void saveQuestion(
-    String term,
-    String definition, {
-    String? questionId,
-    DateTime? ogCreatedAt,
-  }) {
-    String uuid;
-    DateTime createdAt = DateTime.now();
-
-    if (questionId == null) {
-      uuid = const Uuid().v1();
-    } else {
-      uuid = questionId;
-    }
-
-    if (ogCreatedAt != null) {
-      createdAt = ogCreatedAt;
-    }
-
+  void saveNewQuestion(String term, String definition,) {
     setState(() {
       questionBox.put(
-        uuid,
+        const Uuid().v1(),
         Question(
           term: term,
           definition: definition,
           quizId: widget.quizId,
-          createdAt: createdAt,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      );
+    });
+  }
+
+  void editQuestion(String term, String definition, String questionId, DateTime ogCreatedAt,) {
+    setState(() {
+      questionBox.put(
+        questionId,
+        Question(
+          term: term,
+          definition: definition,
+          quizId: widget.quizId,
+          createdAt: ogCreatedAt,
           updatedAt: DateTime.now(),
         ),
       );
@@ -81,9 +76,10 @@ class _QuizScreenState extends State<QuizScreen> {
       context: context,
       builder: (context) {
         return QuestionDialog(
-          saveQuestion: saveQuestion,
-          quizName: quiz.name,
           context: context,
+          saveNewQuestion: saveNewQuestion,
+          editQuestion: editQuestion,
+          quizName: quiz.name,
           formType: dialogType,
           questionId: questionId,
           question: question,

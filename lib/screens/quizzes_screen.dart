@@ -18,32 +18,36 @@ class QuizzesScreen extends StatefulWidget {
 class _QuizzesScreenState extends State<QuizzesScreen> {
   final quizBox = Hive.box<Quiz>('quizBox');
 
-  void saveQuiz(
-    String quizName,
-    String quizDesc, {
-    String? quizId,
-    DateTime? ogCreatedAt,
-  }) {
-    String uuid;
-    DateTime createdAt = DateTime.now();
-
-    if (quizId == null) {
-      uuid = const Uuid().v1();
-    } else {
-      uuid = quizId;
-    }
-
-    if (ogCreatedAt != null) {
-      createdAt = ogCreatedAt;
-    }
-
+  void saveNewQuiz(
+    String name,
+    String desc,
+  ) {
     setState(() {
       quizBox.put(
-        uuid,
+        const Uuid().v1(),
         Quiz(
-          name: quizName,
-          description: quizDesc,
-          createdAt: createdAt,
+          name: name,
+          description: desc,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      );
+    });
+  }
+
+  void editQuiz(
+    String name,
+    String desc,
+    String quizId,
+    DateTime ogCreatedAt,
+  ) {
+    setState(() {
+      quizBox.put(
+        quizId,
+        Quiz(
+          name: name,
+          description: desc,
+          createdAt: ogCreatedAt,
           updatedAt: DateTime.now(),
         ),
       );
@@ -53,6 +57,7 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
   void deleteQuiz(String quizId) {
     setState(() {
       quizBox.delete(quizId);
+      // cascade delete
       final questionBox = Hive.box<Question>('questionBox');
       for (String key in questionBox.keys) {
         if (questionBox.get(key)!.quizId == quizId) {
@@ -80,11 +85,12 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
       context: context,
       builder: (context) {
         return QuizDialog(
-          saveQuiz: saveQuiz,
           context: context,
+          saveNewQuiz: saveNewQuiz,
+          editQuiz: editQuiz,
           formType: dialogType,
-          quiz: quiz,
           quizId: quizId,
+          quiz: quiz,
         );
       },
     );
@@ -104,7 +110,7 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
         },
       ),
       floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterDocked,
+          FloatingActionButtonLocation.centerDocked,
       body: ListView.builder(
         itemCount: quizBox.length,
         itemBuilder: (context, index) {
