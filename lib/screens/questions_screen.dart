@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quizzer/data/question.dart';
-import 'package:flutter_quizzer/data/quiz.dart';
-import 'package:flutter_quizzer/screens/new_question_screen.dart';
+import 'package:flutter_quizzer/types/form_types.dart';
+import 'package:flutter_quizzer/schema/question.dart';
+import 'package:flutter_quizzer/schema/quiz.dart';
+import 'package:flutter_quizzer/screens/question_dialog_screen.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -20,8 +21,15 @@ class _QuizScreenState extends State<QuizScreen> {
   late final Quiz quiz = quizBox.get(widget.quizId)!;
   final questionBox = Hive.box<Question>('questionBox');
 
-  void saveNewQuestion(String term, String definition) {
-    String uuid = const Uuid().v1();
+  // creating a new question or editing a question
+  void saveQuestion(String term, String definition, {String? questionId}) {
+    String uuid;
+
+    if (questionId == null) {
+      uuid = const Uuid().v1();
+    } else {
+      uuid = questionId;
+    }
 
     setState(() {
       questionBox.put(
@@ -56,14 +64,18 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  void showQuestionDialog() {
+  void showQuestionDialog(FormType dialogType,
+      {String? questionId, Question? question}) {
     showDialog(
       context: context,
       builder: (context) {
-        return NewQuestionDialog(
-          saveNewQuestion: saveNewQuestion,
+        return QuestionDialog(
+          saveQuestion: saveQuestion,
           quizName: quiz.name,
           context: context,
+          formType: dialogType,
+          questionId: questionId,
+          question: question,
         );
       },
     );
@@ -89,15 +101,15 @@ class _QuizScreenState extends State<QuizScreen> {
             itemCount: questionKeys.length,
             itemBuilder: (context, index) {
               final questionId = questionKeys[index];
-              final question = questionBox.get(questionId)!;
+              Question question = questionBox.get(questionId)!;
 
               return Padding(
                 padding:
                     const EdgeInsets.only(top: 20.0, right: 20.0, left: 20.0),
                 child: Slidable(
                   endActionPane: ActionPane(
-                    motion: const StretchMotion(),
-                    extentRatio: 0.15,
+                    motion: const DrawerMotion(),
+                    extentRatio: 0.3,
                     children: [
                       SlidableAction(
                         onPressed: (context) {
@@ -106,7 +118,19 @@ class _QuizScreenState extends State<QuizScreen> {
                         icon: Icons.delete,
                         backgroundColor: Colors.red.shade300,
                         borderRadius: BorderRadius.circular(12),
-                      )
+                      ),
+                      SlidableAction(
+                        onPressed: (context) {
+                          showQuestionDialog(
+                            FormType.edit,
+                            questionId: questionId,
+                            question: question,
+                          );
+                        },
+                        icon: Icons.edit,
+                        backgroundColor: Colors.green,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ],
                   ),
                   child: Card(
@@ -136,7 +160,9 @@ class _QuizScreenState extends State<QuizScreen> {
       floatingActionButton: FloatingActionButton.extended(
         label: const Text('New Question'),
         icon: const Icon(Icons.add),
-        onPressed: showQuestionDialog,
+        onPressed: () {
+          showQuestionDialog(FormType.create);
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );

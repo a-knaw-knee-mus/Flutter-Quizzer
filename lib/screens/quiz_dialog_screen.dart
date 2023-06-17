@@ -1,11 +1,10 @@
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 
-class NewQuizDialog extends StatelessWidget {
-  final void Function(String, String) saveNewQuiz;
+class QuizDialog extends StatelessWidget {
+  final void Function(String, String) saveQuiz;
   final BuildContext context;
 
-  NewQuizDialog({super.key, required this.saveNewQuiz, required this.context});
+  QuizDialog({super.key, required this.saveQuiz, required this.context});
 
   final _quizNameController = TextEditingController();
   final _quizDescController = TextEditingController();
@@ -16,7 +15,7 @@ class NewQuizDialog extends StatelessWidget {
     if (!_formKey.currentState!.validate()) return;
 
     // Form submit
-    saveNewQuiz(_quizNameController.text, _quizDescController.text);
+    saveQuiz(_quizNameController.text, _quizDescController.text);
 
     // Form reset
     _quizNameController.clear();

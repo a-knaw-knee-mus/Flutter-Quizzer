@@ -1,42 +1,103 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quizzer/types/form_types.dart';
+import 'package:flutter_quizzer/schema/question.dart';
 
-class NewQuestionDialog extends StatelessWidget {
-  final void Function(String, String) saveNewQuestion;
+class QuestionDialog extends StatefulWidget {
+  final void Function(String, String, {String? questionId}) saveQuestion;
   final String quizName;
   final BuildContext context;
+  final FormType formType;
+  final Question? question;
+  final String? questionId;
 
-  NewQuestionDialog({
+  const QuestionDialog({
     super.key,
-    required this.saveNewQuestion,
+    required this.saveQuestion,
     required this.quizName,
     required this.context,
+    required this.formType,
+    this.question,
+    this.questionId,
   });
 
+  @override
+  State<QuestionDialog> createState() => _QuestionDialogState();
+}
+
+class _QuestionDialogState extends State<QuestionDialog> {
   final _questionTermController = TextEditingController();
-  final _questionAnswerController = TextEditingController();
+
+  final _questionDefinitionController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    if (widget.question != null) {
+      _questionTermController.text = widget.question!.term;
+      _questionDefinitionController.text = widget.question!.definition;
+    }
+    super.initState();
+  }
+
+  String getDialogTitle() {
+    switch (widget.formType) {
+      case FormType.create:
+        return 'Create a new question for ${widget.quizName}';
+      case FormType.edit:
+        return 'Edit a question for ${widget.quizName}';
+      default:
+        return 'Invalid form type';
+    }
+  }
+
+  String getSnackbarText() {
+    switch (widget.formType) {
+      case FormType.create:
+        return 'New question created for ${widget.quizName}!';
+      case FormType.edit:
+        return 'Question Edited!';
+      default:
+        return 'Invalid form type';
+    }
+  }
+
+  Color getSnackbarColor() {
+    switch (widget.formType) {
+      case FormType.create:
+        return Colors.green;
+      case FormType.edit:
+        return Colors.blue;
+      default:
+        return Colors.green;
+    }
+  }
 
   void onSave() {
     // Form validate
     if (!_formKey.currentState!.validate()) return;
-    
+
     // Form submit
-    saveNewQuestion(_questionTermController.text, _questionAnswerController.text);
+    widget.saveQuestion(
+      _questionTermController.text,
+      _questionDefinitionController.text,
+      questionId: widget.questionId,
+    );
 
     // Form reset
     _questionTermController.clear();
-    _questionAnswerController.clear();
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
+    _questionDefinitionController.clear();
+    Navigator.of(widget.context).pop();
+    ScaffoldMessenger.of(widget.context).showSnackBar(
       SnackBar(
         content: Text(
-          'New question created for $quizName!',
+          getSnackbarText(),
         ),
         duration: const Duration(
           milliseconds: 1500,
         ),
         showCloseIcon: true,
-        backgroundColor: Colors.green,
+        backgroundColor: getSnackbarColor(),
       ),
     );
   }
@@ -52,7 +113,7 @@ class NewQuestionDialog extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Create a new question for $quizName',
+                getDialogTitle(),
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -64,6 +125,7 @@ class NewQuestionDialog extends StatelessWidget {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Term',
+                  labelText: 'Term',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -73,10 +135,11 @@ class NewQuestionDialog extends StatelessWidget {
                 },
               ),
               TextFormField(
-                controller: _questionAnswerController,
+                controller: _questionDefinitionController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Definition',
+                  labelText: 'Definition',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {

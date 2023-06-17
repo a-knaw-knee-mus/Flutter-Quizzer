@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quizzer/data/question.dart';
-import 'package:flutter_quizzer/data/quiz.dart';
+import 'package:flutter_quizzer/schema/question.dart';
+import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/profile_screen.dart';
 import 'package:flutter_quizzer/screens/quizzes_screen.dart';
 import 'package:hive_flutter/hive_flutter.dart';
