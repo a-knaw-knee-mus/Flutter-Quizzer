@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
-import 'package:flutter_quizzer/types/form_types.dart';
+import 'package:flutter_quizzer/util/form_types.dart';
 
 class QuizDialog extends StatefulWidget {
   final BuildContext context;
@@ -130,6 +130,9 @@ class _QuizDialogState extends State<QuizDialog> {
               TextFormField(
                 controller: _quizNameController,
                 autofocus: true,
+                keyboardType: TextInputType.multiline,
+                minLines: 1,
+                maxLines: 2,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Quiz Name',
@@ -144,6 +147,9 @@ class _QuizDialogState extends State<QuizDialog> {
               ),
               TextFormField(
                 controller: _quizDescController,
+                keyboardType: TextInputType.multiline,
+                minLines: 1,
+                maxLines: 3,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Quiz Description',

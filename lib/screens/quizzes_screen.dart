@@ -1,11 +1,13 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/quiz_dialog_screen.dart';
 import 'package:flutter_quizzer/screens/questions_screen.dart';
-import 'package:flutter_quizzer/types/form_types.dart';
+import 'package:flutter_quizzer/util/form_types.dart';
+import 'package:flutter_quizzer/util/sort_quiz.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 class QuizzesScreen extends StatefulWidget {
@@ -17,6 +19,7 @@ class QuizzesScreen extends StatefulWidget {
 
 class _QuizzesScreenState extends State<QuizzesScreen> {
   final quizBox = Hive.box<Quiz>('quizBox');
+  QuizSortType sortType = QuizSortType.nameAsc;
 
   void saveNewQuiz(
     String name,
@@ -99,79 +102,131 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your Quizzes'),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        label: const Text('New Quiz'),
-        icon: const Icon(Icons.add),
-        onPressed: () {
-          showQuizDialog(FormType.create);
-        },
-      ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerDocked,
-      body: ListView.builder(
-        itemCount: quizBox.length,
-        itemBuilder: (context, index) {
-          final quizId = quizBox.keyAt(index)!;
-          final quiz = quizBox.getAt(index)!;
-
-          return Padding(
-            padding: const EdgeInsets.only(top: 20.0, right: 20.0, left: 20.0),
-            child: Slidable(
-              endActionPane: ActionPane(
-                motion: const StretchMotion(),
-                extentRatio: 0.3,
-                children: [
-                  SlidableAction(
-                    onPressed: (context) {
-                      deleteQuiz(quizId);
-                    },
-                    icon: Icons.delete,
-                    backgroundColor: Colors.red.shade300,
-                    borderRadius: BorderRadius.circular(12),
+        appBar: AppBar(
+          title: const Text('Quizzer!'),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton2(
+                  hint: sortType.getDisplayWidget(Colors.white),
+                  iconStyleData: const IconStyleData(
+                    iconEnabledColor: Colors.white,
+                    icon: Icon(Icons.sort),
                   ),
-                  SlidableAction(
-                    onPressed: (context) {
-                      showQuizDialog(
-                        FormType.edit,
-                        quiz: quiz,
-                        quizId: quizId,
-                      );
-                    },
-                    icon: Icons.edit,
-                    backgroundColor: Colors.green,
-                    borderRadius: BorderRadius.circular(12),
+                  dropdownStyleData: DropdownStyleData(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
-                ],
-              ),
-              child: Card(
-                margin: EdgeInsets.zero,
-                elevation: 0,
-                child: ListTile(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                        return QuizScreen(quizId: quizId);
-                      }),
-                    );
+                  onChanged: (QuizSortType? newSortType) {
+                    setState(() {
+                      sortType = newSortType!;
+                    });
                   },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  tileColor: Colors.purpleAccent,
-                  trailing: const Icon(Icons.arrow_forward_ios_rounded),
-                  title: Text(quiz.name),
-                  subtitle: Text(
-                      '${quiz.description} - ${quiz.createdAt} - ${quiz.updatedAt}'),
+                  items: QuizSortType.values.map((QuizSortType s) {
+                    return DropdownMenuItem(
+                      value: s,
+                      child: s.getDisplayWidget(Colors.black),
+                    );
+                  }).toList(),
                 ),
               ),
             ),
-          );
-        },
-      ),
-    );
+          ],
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          label: const Text('New Quiz'),
+          icon: const Icon(Icons.add),
+          onPressed: () {
+            showQuizDialog(FormType.create);
+          },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        body: Column(
+          children: [
+            Expanded(
+              child: ValueListenableBuilder(
+                  valueListenable: Hive.box<Quiz>('quizBox').listenable(),
+                  builder: (context, quizzes, _) {
+                    List sortedIds = sortType.sortQuizIds(quizzes);
+                    return ListView.builder(
+                      itemCount: sortedIds.length,
+                      itemBuilder: (context, index) {
+                        final quizId = sortedIds[index];
+                        final quiz = quizzes.get(quizId)!;
+
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            top: 20.0,
+                            right: 20.0,
+                            left: 20.0,
+                          ),
+                          child: Slidable(
+                            startActionPane: ActionPane(
+                              motion: const StretchMotion(),
+                              extentRatio: 0.15,
+                              children: [
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    showQuizDialog(
+                                      FormType.edit,
+                                      quiz: quiz,
+                                      quizId: quizId,
+                                    );
+                                  },
+                                  icon: Icons.edit,
+                                  backgroundColor: Colors.green,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ],
+                            ),
+                            endActionPane: ActionPane(
+                              motion: const StretchMotion(),
+                              extentRatio: 0.15,
+                              children: [
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    deleteQuiz(quizId);
+                                  },
+                                  icon: Icons.delete,
+                                  backgroundColor: Colors.red.shade300,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ],
+                            ),
+                            child: Card(
+                              margin: EdgeInsets.zero,
+                              elevation: 0,
+                              child: ListTile(
+                                isThreeLine: true,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) {
+                                      return QuizScreen(quizId: quizId);
+                                    }),
+                                  );
+                                },
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                tileColor: Colors.purpleAccent,
+                                trailing:
+                                    const Icon(Icons.arrow_forward_ios_rounded),
+                                title: Text(quiz.name),
+                                subtitle: Text(
+                                    '${quiz.description} - ${quiz.createdAt} - ${quiz.updatedAt}'),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }),
+            ),
+          ],
+        ));
   }
 }

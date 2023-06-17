@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quizzer/types/form_types.dart';
+import 'package:flutter_quizzer/util/form_types.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 
 class QuestionDialog extends StatefulWidget {
@@ -45,9 +45,9 @@ class _QuestionDialogState extends State<QuestionDialog> {
   String getDialogTitle() {
     switch (widget.formType) {
       case FormType.create:
-        return 'Create a new question for ${widget.quizName}';
+        return 'Create a new question';
       case FormType.edit:
-        return 'Edit a question for ${widget.quizName}';
+        return 'Edit a question';
       default:
         return 'Invalid form type';
     }
@@ -143,6 +143,9 @@ class _QuestionDialogState extends State<QuestionDialog> {
               TextFormField(
                 controller: _questionTermController,
                 autofocus: true,
+                keyboardType: TextInputType.multiline,
+                minLines: 1,
+                maxLines: 2,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Term',
@@ -157,6 +160,9 @@ class _QuestionDialogState extends State<QuestionDialog> {
               ),
               TextFormField(
                 controller: _questionDefinitionController,
+                keyboardType: TextInputType.multiline,
+                minLines: 1,
+                maxLines: 2,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Definition',

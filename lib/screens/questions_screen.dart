@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quizzer/types/form_types.dart';
+import 'package:flutter_quizzer/util/form_types.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/question_dialog_screen.dart';
@@ -21,7 +21,10 @@ class _QuizScreenState extends State<QuizScreen> {
   late final Quiz quiz = quizBox.get(widget.quizId)!;
   final questionBox = Hive.box<Question>('questionBox');
 
-  void saveNewQuestion(String term, String definition,) {
+  void saveNewQuestion(
+    String term,
+    String definition,
+  ) {
     setState(() {
       questionBox.put(
         const Uuid().v1(),
@@ -36,7 +39,12 @@ class _QuizScreenState extends State<QuizScreen> {
     });
   }
 
-  void editQuestion(String term, String definition, String questionId, DateTime ogCreatedAt,) {
+  void editQuestion(
+    String term,
+    String definition,
+    String questionId,
+    DateTime ogCreatedAt,
+  ) {
     setState(() {
       questionBox.put(
         questionId,
@@ -92,7 +100,24 @@ class _QuizScreenState extends State<QuizScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${quiz.name}: ${quiz.description}'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              quiz.name,
+              style: const TextStyle(
+                fontSize: 22,
+              ),
+              overflow: TextOverflow.fade,
+            ),
+            Text(quiz.description,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  overflow: TextOverflow.fade,
+                )),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         label: const Text('New Question'),
@@ -122,18 +147,10 @@ class _QuizScreenState extends State<QuizScreen> {
                 padding:
                     const EdgeInsets.only(top: 20.0, right: 20.0, left: 20.0),
                 child: Slidable(
-                  endActionPane: ActionPane(
+                  startActionPane: ActionPane(
                     motion: const DrawerMotion(),
-                    extentRatio: 0.3,
+                    extentRatio: 0.15,
                     children: [
-                      SlidableAction(
-                        onPressed: (context) {
-                          deleteQuestion(questionId);
-                        },
-                        icon: Icons.delete,
-                        backgroundColor: Colors.red.shade300,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                       SlidableAction(
                         onPressed: (context) {
                           showQuestionDialog(
@@ -144,6 +161,20 @@ class _QuizScreenState extends State<QuizScreen> {
                         },
                         icon: Icons.edit,
                         backgroundColor: Colors.green,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ],
+                  ),
+                  endActionPane: ActionPane(
+                    motion: const DrawerMotion(),
+                    extentRatio: 0.15,
+                    children: [
+                      SlidableAction(
+                        onPressed: (context) {
+                          deleteQuestion(questionId);
+                        },
+                        icon: Icons.delete,
+                        backgroundColor: Colors.red.shade300,
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ],
