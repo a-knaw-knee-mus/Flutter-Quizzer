@@ -23,13 +23,23 @@ class _QuizScreenState extends State<QuizScreen> {
 
   // creating a new question or editing a question
   // TODO: updatedAt should be fixed
-  void saveQuestion(String term, String definition, {String? questionId}) {
+  void saveQuestion(
+    String term,
+    String definition, {
+    String? questionId,
+    DateTime? ogCreatedAt,
+  }) {
     String uuid;
+    DateTime createdAt = DateTime.now();
 
     if (questionId == null) {
       uuid = const Uuid().v1();
     } else {
       uuid = questionId;
+    }
+
+    if (ogCreatedAt != null) {
+      createdAt = ogCreatedAt;
     }
 
     setState(() {
@@ -39,7 +49,7 @@ class _QuizScreenState extends State<QuizScreen> {
           term: term,
           definition: definition,
           quizId: widget.quizId,
-          createdAt: DateTime.now(),
+          createdAt: createdAt,
           updatedAt: DateTime.now(),
         ),
       );
@@ -155,7 +165,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text('Term: ${question.term}'),
-                          Text('Definition: ${question.definition}')
+                          Text('Definition: ${question.definition}'),
                         ],
                       ),
                     ),

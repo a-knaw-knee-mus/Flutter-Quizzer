@@ -18,13 +18,23 @@ class QuizzesScreen extends StatefulWidget {
 class _QuizzesScreenState extends State<QuizzesScreen> {
   final quizBox = Hive.box<Quiz>('quizBox');
 
-  void saveQuiz(String quizName, String quizDesc, {String? quizId}) {
+  void saveQuiz(
+    String quizName,
+    String quizDesc, {
+    String? quizId,
+    DateTime? ogCreatedAt,
+  }) {
     String uuid;
+    DateTime createdAt = DateTime.now();
 
     if (quizId == null) {
       uuid = const Uuid().v1();
     } else {
       uuid = quizId;
+    }
+
+    if (ogCreatedAt != null) {
+      createdAt = ogCreatedAt;
     }
 
     setState(() {
@@ -33,7 +43,7 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
         Quiz(
           name: quizName,
           description: quizDesc,
-          createdAt: DateTime.now(),
+          createdAt: createdAt,
           updatedAt: DateTime.now(),
         ),
       );
@@ -148,7 +158,8 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                   tileColor: Colors.purpleAccent,
                   trailing: const Icon(Icons.arrow_forward_ios_rounded),
                   title: Text(quiz.name),
-                  subtitle: Text(quiz.description),
+                  subtitle: Text(
+                      '${quiz.description} - ${quiz.createdAt} - ${quiz.updatedAt}'),
                 ),
               ),
             ),

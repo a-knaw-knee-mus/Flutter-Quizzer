@@ -3,7 +3,7 @@ import 'package:flutter_quizzer/types/form_types.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 
 class QuestionDialog extends StatefulWidget {
-  final void Function(String, String, {String? questionId}) saveQuestion;
+  final void Function(String, String, {String? questionId, DateTime? ogCreatedAt}) saveQuestion;
   final String quizName;
   final BuildContext context;
   final FormType formType;
@@ -82,6 +82,7 @@ class _QuestionDialogState extends State<QuestionDialog> {
       _questionTermController.text,
       _questionDefinitionController.text,
       questionId: widget.questionId,
+      ogCreatedAt: widget.question?.createdAt,
     );
 
     // Form reset
