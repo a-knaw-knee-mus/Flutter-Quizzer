@@ -1,36 +1,101 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quizzer/schema/quiz.dart';
+import 'package:flutter_quizzer/types/form_types.dart';
 
-class QuizDialog extends StatelessWidget {
-  final void Function(String, String) saveQuiz;
+class QuizDialog extends StatefulWidget {
+  final void Function(String, String, {String? quizId}) saveQuiz;
   final BuildContext context;
+  final FormType formType;
+  final Quiz? quiz;
+  final String? quizId;
 
-  QuizDialog({super.key, required this.saveQuiz, required this.context});
+  const QuizDialog({
+    super.key,
+    required this.saveQuiz,
+    required this.context,
+    required this.formType,
+    this.quizId,
+    this.quiz,
+  });
 
+  @override
+  State<QuizDialog> createState() => _QuizDialogState();
+}
+
+class _QuizDialogState extends State<QuizDialog> {
   final _quizNameController = TextEditingController();
+
   final _quizDescController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    if (widget.quiz != null) {
+      _quizNameController.text = widget.quiz!.name;
+      _quizDescController.text = widget.quiz!.description;
+    }
+    super.initState();
+  }
+
+  String getDialogTitle() {
+    switch (widget.formType) {
+      case FormType.create:
+        return 'Create a new quiz!';
+      case FormType.edit:
+        return 'Edit a quiz!';
+      default:
+        return 'Invalid form type';
+    }
+  }
+
+  String getSnackbarText() {
+    switch (widget.formType) {
+      case FormType.create:
+        return 'New quiz created!';
+      case FormType.edit:
+        return 'Quiz edited!';
+      default:
+        return 'Invalid form type';
+    }
+  }
+
+  Color getSnackbarColor() {
+    switch (widget.formType) {
+      case FormType.create:
+        return Colors.green;
+      case FormType.edit:
+        return Colors.blue;
+      default:
+        return Colors.green;
+    }
+  }
 
   void onSave() {
     // Form validate
     if (!_formKey.currentState!.validate()) return;
 
     // Form submit
-    saveQuiz(_quizNameController.text, _quizDescController.text);
+    widget.saveQuiz(
+      _quizNameController.text,
+      _quizDescController.text,
+      quizId: widget.quizId,
+    );
 
     // Form reset
     _quizNameController.clear();
     _quizDescController.clear();
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+    Navigator.of(widget.context).pop();
+    ScaffoldMessenger.of(widget.context).showSnackBar(
+      SnackBar(
         content: Text(
-          'New quiz created!',
+          getSnackbarText(),
         ),
-        duration: Duration(
+        duration: const Duration(
           milliseconds: 1500,
         ),
         showCloseIcon: true,
-        backgroundColor: Colors.green,
+        backgroundColor: getSnackbarColor(),
       ),
     );
   }
@@ -45,9 +110,9 @@ class QuizDialog extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Create a new quiz',
-                style: TextStyle(
+              Text(
+                getDialogTitle(),
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -58,6 +123,7 @@ class QuizDialog extends StatelessWidget {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Quiz Name',
+                  labelText: 'Quiz Name',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -71,6 +137,7 @@ class QuizDialog extends StatelessWidget {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Quiz Description',
+                  labelText: 'Quiz Description',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {

@@ -3,6 +3,7 @@ import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/quiz_dialog_screen.dart';
 import 'package:flutter_quizzer/screens/questions_screen.dart';
+import 'package:flutter_quizzer/types/form_types.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
@@ -17,8 +18,14 @@ class QuizzesScreen extends StatefulWidget {
 class _QuizzesScreenState extends State<QuizzesScreen> {
   final quizBox = Hive.box<Quiz>('quizBox');
 
-  void saveQuiz(String quizName, String quizDesc) {
-    String uuid = const Uuid().v1();
+  void saveQuiz(String quizName, String quizDesc, {String? quizId}) {
+    String uuid;
+
+    if (quizId == null) {
+      uuid = const Uuid().v1();
+    } else {
+      uuid = quizId;
+    }
 
     setState(() {
       quizBox.put(
@@ -58,11 +65,17 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
     );
   }
 
-  void showQuizDialog() {
+  void showQuizDialog(FormType dialogType, {String? quizId, Quiz? quiz}) {
     showDialog(
       context: context,
       builder: (context) {
-        return QuizDialog(saveQuiz: saveQuiz, context: context);
+        return QuizDialog(
+          saveQuiz: saveQuiz,
+          context: context,
+          formType: dialogType,
+          quiz: quiz,
+          quizId: quizId,
+        );
       },
     );
   }
@@ -76,7 +89,9 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
       floatingActionButton: FloatingActionButton.extended(
         label: const Text('New Quiz'),
         icon: const Icon(Icons.add),
-        onPressed: showQuizDialog,
+        onPressed: () {
+          showQuizDialog(FormType.create);
+        },
       ),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterDocked,
@@ -102,7 +117,13 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   SlidableAction(
-                    onPressed: (context) {},
+                    onPressed: (context) {
+                      showQuizDialog(
+                        FormType.edit,
+                        quiz: quiz,
+                        quizId: quizId,
+                      );
+                    },
                     icon: Icons.edit,
                     backgroundColor: Colors.green,
                     borderRadius: BorderRadius.circular(12),

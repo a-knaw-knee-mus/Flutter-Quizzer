@@ -22,6 +22,7 @@ class _QuizScreenState extends State<QuizScreen> {
   final questionBox = Hive.box<Question>('questionBox');
 
   // creating a new question or editing a question
+  // TODO: updatedAt should be fixed
   void saveQuestion(String term, String definition, {String? questionId}) {
     String uuid;
 
@@ -87,6 +88,14 @@ class _QuizScreenState extends State<QuizScreen> {
       appBar: AppBar(
         title: Text('${quiz.name}: ${quiz.description}'),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        label: const Text('New Question'),
+        icon: const Icon(Icons.add),
+        onPressed: () {
+          showQuestionDialog(FormType.create);
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: ValueListenableBuilder(
         valueListenable: Hive.box<Question>('questionBox').listenable(),
         builder: (context, questions, _) {
@@ -157,14 +166,6 @@ class _QuizScreenState extends State<QuizScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        label: const Text('New Question'),
-        icon: const Icon(Icons.add),
-        onPressed: () {
-          showQuestionDialog(FormType.create);
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
