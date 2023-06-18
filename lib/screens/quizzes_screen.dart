@@ -4,6 +4,7 @@ import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/quiz_dialog_screen.dart';
 import 'package:flutter_quizzer/screens/questions_screen.dart';
+import 'package:flutter_quizzer/util/colors.dart';
 import 'package:flutter_quizzer/util/form_types.dart';
 import 'package:flutter_quizzer/util/sort_quiz.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -116,7 +117,7 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                   ),
                   dropdownStyleData: DropdownStyleData(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
                   onChanged: (QuizSortType? newSortType) {
@@ -155,18 +156,34 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                       itemBuilder: (context, index) {
                         final quizId = sortedIds[index];
                         final quiz = quizzes.get(quizId)!;
+                        final questionBox = Hive.box<Question>('questionBox');
+                        int quizSize = questionBox.values.where((question) {
+                          return question.quizId == quizId;
+                        }).length;
+
+                        void modifyCount(int change) {
+                          setState(() {
+                            quizSize += change;
+                          });
+                        }
 
                         return Padding(
                           padding: const EdgeInsets.only(
                             top: 20.0,
-                            right: 20.0,
-                            left: 20.0,
+                            right: 60.0,
                           ),
                           child: Slidable(
                             startActionPane: ActionPane(
-                              motion: const StretchMotion(),
-                              extentRatio: 0.15,
+                              motion: const DrawerMotion(),
+                              extentRatio: 0.3,
                               children: [
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    deleteQuiz(quizId);
+                                  },
+                                  icon: Icons.delete,
+                                  backgroundColor: Colors.red,
+                                ),
                                 SlidableAction(
                                   onPressed: (context) {
                                     showQuizDialog(
@@ -177,21 +194,6 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                                   },
                                   icon: Icons.edit,
                                   backgroundColor: Colors.green,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ],
-                            ),
-                            endActionPane: ActionPane(
-                              motion: const StretchMotion(),
-                              extentRatio: 0.15,
-                              children: [
-                                SlidableAction(
-                                  onPressed: (context) {
-                                    deleteQuiz(quizId);
-                                  },
-                                  icon: Icons.delete,
-                                  backgroundColor: Colors.red.shade300,
-                                  borderRadius: BorderRadius.circular(12),
                                 ),
                               ],
                             ),
@@ -205,19 +207,56 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (BuildContext context) {
-                                      return QuizScreen(quizId: quizId);
+                                      return QuizScreen(
+                                        quizId: quizId,
+                                        modifyCount: modifyCount,
+                                      );
                                     }),
                                   );
                                 },
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(15),
+                                    bottomRight: Radius.circular(15),
+                                  ),
                                 ),
-                                tileColor: Colors.purpleAccent,
+                                tileColor: primary[400],
                                 trailing:
                                     const Icon(Icons.arrow_forward_ios_rounded),
-                                title: Text(quiz.name),
-                                subtitle: Text(
-                                    '${quiz.description} - ${quiz.createdAt} - ${quiz.updatedAt}'),
+                                title: Text(
+                                  quiz.name,
+                                  style: const TextStyle(
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      quiz.description,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: primary[500],
+                                          border: Border.all(color: primary[900]!, width: 1.5),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        padding: const EdgeInsets.all(5),
+                                        child: Text(
+                                          '$quizSize term${quizSize != 1 ? 's' : ''}',
+                                          style: TextStyle(color: primary[100]),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

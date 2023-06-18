@@ -3,6 +3,7 @@ import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/profile_screen.dart';
 import 'package:flutter_quizzer/screens/quizzes_screen.dart';
+import 'package:flutter_quizzer/util/colors.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Navigation with Arguments',
       home: const MyPage(),
-      theme: ThemeData(primarySwatch: Colors.purple),
+      theme: ThemeData(primarySwatch: primary),
       debugShowCheckedModeBanner: false,
     );
   }

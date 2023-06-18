@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quizzer/util/colors.dart';
 import 'package:flutter_quizzer/util/form_types.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
@@ -11,8 +12,13 @@ import 'package:uuid/uuid.dart';
 
 class QuizScreen extends StatefulWidget {
   final String quizId;
+  final void Function(int) modifyCount;
 
-  const QuizScreen({super.key, required this.quizId});
+  const QuizScreen({
+    super.key,
+    required this.quizId,
+    required this.modifyCount,
+  });
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
@@ -23,7 +29,6 @@ class _QuizScreenState extends State<QuizScreen> {
   late final Quiz quiz = quizBox.get(widget.quizId)!;
   final questionBox = Hive.box<Question>('questionBox');
   QuestionSortType sortType = QuestionSortType.termAsc;
-
   void saveNewQuestion(
     String term,
     String definition,
@@ -40,6 +45,8 @@ class _QuizScreenState extends State<QuizScreen> {
         ),
       );
     });
+
+    widget.modifyCount(1);
   }
 
   void editQuestion(
@@ -66,6 +73,8 @@ class _QuizScreenState extends State<QuizScreen> {
     setState(() {
       questionBox.delete(questionId);
     });
+
+    widget.modifyCount(-1);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -215,7 +224,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   ),
                   child: Card(
                     elevation: 12,
-                    color: Colors.amber,
+                    color: primary[400],
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
