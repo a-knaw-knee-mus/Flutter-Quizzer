@@ -199,7 +199,14 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                             ),
                             child: Card(
                               margin: EdgeInsets.zero,
-                              elevation: 0,
+                              elevation: 12,
+                              color: primary[400],
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(15),
+                                  bottomRight: Radius.circular(15),
+                                ),
+                              ),
                               child: ListTile(
                                 isThreeLine: true,
                                 onTap: () {
@@ -214,15 +221,9 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                                     }),
                                   );
                                 },
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(15),
-                                    bottomRight: Radius.circular(15),
-                                  ),
+                                trailing: const Icon(
+                                  Icons.arrow_forward_ios_rounded,
                                 ),
-                                tileColor: primary[400],
-                                trailing:
-                                    const Icon(Icons.arrow_forward_ios_rounded),
                                 title: Text(
                                   quiz.name,
                                   style: const TextStyle(
@@ -240,11 +241,13 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 6.0),
                                       child: Container(
                                         decoration: BoxDecoration(
                                           color: primary[500],
-                                          border: Border.all(color: primary[900]!, width: 1.5),
+                                          border: Border.all(
+                                              color: primary[900]!, width: 1.5),
                                           borderRadius:
                                               BorderRadius.circular(8),
                                         ),

@@ -187,13 +187,22 @@ class _QuizScreenState extends State<QuizScreen> {
               Question question = questionBox.get(questionId)!;
 
               return Padding(
-                padding:
-                    const EdgeInsets.only(top: 20.0, right: 20.0, left: 20.0),
+                padding: const EdgeInsets.only(
+                  top: 20.0,
+                  right: 60.0,
+                ),
                 child: Slidable(
                   startActionPane: ActionPane(
                     motion: const DrawerMotion(),
-                    extentRatio: 0.15,
+                    extentRatio: 0.3,
                     children: [
+                      SlidableAction(
+                        onPressed: (context) {
+                          deleteQuestion(questionId);
+                        },
+                        icon: Icons.delete,
+                        backgroundColor: Colors.red,
+                      ),
                       SlidableAction(
                         onPressed: (context) {
                           showQuestionDialog(
@@ -204,39 +213,35 @@ class _QuizScreenState extends State<QuizScreen> {
                         },
                         icon: Icons.edit,
                         backgroundColor: Colors.green,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ],
-                  ),
-                  endActionPane: ActionPane(
-                    motion: const DrawerMotion(),
-                    extentRatio: 0.15,
-                    children: [
-                      SlidableAction(
-                        onPressed: (context) {
-                          deleteQuestion(questionId);
-                        },
-                        icon: Icons.delete,
-                        backgroundColor: Colors.red.shade300,
-                        borderRadius: BorderRadius.circular(12),
                       ),
                     ],
                   ),
                   child: Card(
+                    margin: EdgeInsets.zero,
                     elevation: 12,
                     color: primary[400],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(15),
+                        bottomRight: Radius.circular(15),
+                      ),
                     ),
-                    margin: EdgeInsets.zero,
-                    child: SizedBox(
-                      height: 50,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text('Term: ${question.term}'),
-                          Text('Definition: ${question.definition}'),
-                        ],
+                    child: ListTile(
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                      ),
+                      title: Text(
+                        question.term,
+                        style: const TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      subtitle: Text(
+                        question.definition,
+                        style: const TextStyle(
+                          fontSize: 20,
+                        ),
                       ),
                     ),
                   ),
