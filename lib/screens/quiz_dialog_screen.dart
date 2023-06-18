@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/util/form_types.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class QuizDialog extends StatefulWidget {
   final BuildContext context;
@@ -79,17 +80,28 @@ class _QuizDialogState extends State<QuizDialog> {
 
     // Form submit
     switch (widget.formType) {
-      case FormType.create: {
-        widget.saveNewQuiz(_quizNameController.text, _quizDescController.text,);
-        break;
-      }
-      case FormType.edit: {
-        widget.editQuiz(_quizNameController.text, _quizDescController.text, widget.quizId!, widget.quiz!.createdAt,);
-        break;
-      }
-      default: {
-        throw 'Invalid form type';
-      }
+      case FormType.create:
+        {
+          widget.saveNewQuiz(
+            _quizNameController.text,
+            _quizDescController.text,
+          );
+          break;
+        }
+      case FormType.edit:
+        {
+          widget.editQuiz(
+            _quizNameController.text,
+            _quizDescController.text,
+            widget.quizId!,
+            widget.quiz!.createdAt,
+          );
+          break;
+        }
+      default:
+        {
+          throw 'Invalid form type';
+        }
     }
 
     // Form reset
@@ -100,6 +112,7 @@ class _QuizDialogState extends State<QuizDialog> {
       SnackBar(
         content: Text(
           getSnackbarText(),
+          style: GoogleFonts.jost(),
         ),
         duration: const Duration(
           milliseconds: 1500,
@@ -122,7 +135,7 @@ class _QuizDialogState extends State<QuizDialog> {
             children: [
               Text(
                 getDialogTitle(),
-                style: const TextStyle(
+                style: GoogleFonts.jost(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -133,6 +146,7 @@ class _QuizDialogState extends State<QuizDialog> {
                 keyboardType: TextInputType.multiline,
                 minLines: 1,
                 maxLines: 2,
+                style: GoogleFonts.jost(),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Quiz Name',
@@ -150,6 +164,7 @@ class _QuizDialogState extends State<QuizDialog> {
                 keyboardType: TextInputType.multiline,
                 minLines: 1,
                 maxLines: 3,
+                style: GoogleFonts.jost(),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Quiz Description',
@@ -169,21 +184,27 @@ class _QuizDialogState extends State<QuizDialog> {
                     onPressed: onSave,
                     style: ElevatedButton.styleFrom(
                       elevation: 12.0,
-                      textStyle: const TextStyle(
+                      textStyle: GoogleFonts.jost(
                         color: Colors.white,
                       ),
                     ),
-                    child: const Text('Save'),
+                    child: Text(
+                      'Save',
+                      style: GoogleFonts.jost(),
+                    ),
                   ),
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
                       elevation: 12.0,
-                      textStyle: const TextStyle(
+                      textStyle: GoogleFonts.jost(
                         color: Colors.white,
                       ),
                     ),
-                    child: const Text('Cancel'),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.jost(),
+                    ),
                   ),
                 ],
               )

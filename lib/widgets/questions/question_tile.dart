@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/util/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class QuestionTile extends StatelessWidget {
   final String term;
@@ -29,14 +30,14 @@ class QuestionTile extends StatelessWidget {
         ),
         title: Text(
           term,
-          style: const TextStyle(
+          style: GoogleFonts.jost(
             fontSize: 25,
             fontWeight: FontWeight.w400,
           ),
         ),
         subtitle: Text(
           definition,
-          style: const TextStyle(
+          style: GoogleFonts.jost(
             fontSize: 20,
           ),
         ),

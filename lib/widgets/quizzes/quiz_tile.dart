@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/questions_screen.dart';
 import 'package:flutter_quizzer/util/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class QuizTile extends StatelessWidget {
   final String quizId;
@@ -47,7 +48,7 @@ class QuizTile extends StatelessWidget {
         ),
         title: Text(
           quiz.name,
-          style: const TextStyle(
+          style: GoogleFonts.jost(
             fontSize: 25,
             fontWeight: FontWeight.w500,
           ),
@@ -57,7 +58,7 @@ class QuizTile extends StatelessWidget {
           children: [
             Text(
               quiz.description,
-              style: const TextStyle(
+              style: GoogleFonts.jost(
                 fontSize: 20,
               ),
             ),
@@ -69,10 +70,12 @@ class QuizTile extends StatelessWidget {
                   border: Border.all(color: primary[900]!, width: 1.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.all(5),
+                padding: const EdgeInsets.all(4),
                 child: Text(
                   '$quizSize term${quizSize != 1 ? 's' : ''}',
-                  style: TextStyle(color: primary[100]),
+                  style: GoogleFonts.jost(
+                    color: primary[100],
+                  ),
                 ),
               ),
             ),

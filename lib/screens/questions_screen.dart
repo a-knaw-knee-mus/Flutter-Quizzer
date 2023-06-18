@@ -8,6 +8,7 @@ import 'package:flutter_quizzer/widgets/questions/question_carousel.dart';
 import 'package:flutter_quizzer/widgets/questions/question_sort_dropdown.dart';
 import 'package:flutter_quizzer/widgets/questions/question_tile.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -79,11 +80,12 @@ class _QuizScreenState extends State<QuizScreen> {
     widget.modifyCount(-1);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Text(
           'Term deleted!',
+          style: GoogleFonts.jost(),
         ),
-        duration: Duration(
+        duration: const Duration(
           milliseconds: 1500,
         ),
         showCloseIcon: true,
@@ -122,18 +124,18 @@ class _QuizScreenState extends State<QuizScreen> {
           children: [
             Text(
               quiz.name,
-              style: const TextStyle(
+              style: GoogleFonts.jost(
                 fontSize: 22,
               ),
               overflow: TextOverflow.fade,
             ),
             Text(
               quiz.description,
-              style: const TextStyle(
+              style: GoogleFonts.jost(
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
-                overflow: TextOverflow.fade,
               ),
+              overflow: TextOverflow.fade,
             ),
           ],
         ),
@@ -152,7 +154,13 @@ class _QuizScreenState extends State<QuizScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        label: const Text('New Question'),
+        label: Text(
+          'New Question',
+          style: GoogleFonts.jost(
+            fontWeight: FontWeight.w500,
+            fontSize: 15,
+          ),
+        ),
         icon: const Icon(Icons.add),
         onPressed: () {
           showQuestionDialog(FormType.create);
@@ -172,7 +180,9 @@ class _QuizScreenState extends State<QuizScreen> {
           }).toList();
           return Column(
             children: [
-              QuestionCarousel(questionKeys: questionKeys,),
+              QuestionCarousel(
+                questionKeys: questionKeys,
+              ),
               Expanded(
                 child: ShaderMask(
                   shaderCallback: (Rect rect) {

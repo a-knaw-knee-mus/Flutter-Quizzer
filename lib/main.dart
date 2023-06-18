@@ -4,6 +4,7 @@ import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/profile_screen.dart';
 import 'package:flutter_quizzer/screens/quizzes_screen.dart';
 import 'package:flutter_quizzer/util/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
@@ -55,11 +56,17 @@ class _MyPageState extends State<MyPage> {
         items: [
           SalomonBottomBarItem(
             icon: const Icon(Icons.home),
-            title: const Text('Your Quizzes'),
+            title: Text(
+              'Your Quizzes',
+              style: GoogleFonts.jost(),
+            ),
           ),
           SalomonBottomBarItem(
             icon: const Icon(Icons.person),
-            title: const Text('Profile'),
+            title: Text(
+              'Profile',
+              style: GoogleFonts.jost(),
+            ),
           ),
         ],
       ),

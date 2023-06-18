@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/util/form_types.dart';
 import 'package:flutter_quizzer/schema/question.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class QuestionDialog extends StatefulWidget {
   final BuildContext context;
@@ -113,6 +114,7 @@ class _QuestionDialogState extends State<QuestionDialog> {
       SnackBar(
         content: Text(
           getSnackbarText(),
+          style: GoogleFonts.jost(),
         ),
         duration: const Duration(
           milliseconds: 1500,
@@ -135,7 +137,7 @@ class _QuestionDialogState extends State<QuestionDialog> {
             children: [
               Text(
                 getDialogTitle(),
-                style: const TextStyle(
+                style: GoogleFonts.jost(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -146,6 +148,7 @@ class _QuestionDialogState extends State<QuestionDialog> {
                 keyboardType: TextInputType.multiline,
                 minLines: 1,
                 maxLines: 2,
+                style: GoogleFonts.jost(),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Term',
@@ -163,6 +166,7 @@ class _QuestionDialogState extends State<QuestionDialog> {
                 keyboardType: TextInputType.multiline,
                 minLines: 1,
                 maxLines: 2,
+                style: GoogleFonts.jost(),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Definition',
@@ -182,21 +186,27 @@ class _QuestionDialogState extends State<QuestionDialog> {
                     onPressed: onSave,
                     style: ElevatedButton.styleFrom(
                       elevation: 12.0,
-                      textStyle: const TextStyle(
+                      textStyle: GoogleFonts.jost(
                         color: Colors.white,
                       ),
                     ),
-                    child: const Text('Save'),
+                    child: Text(
+                      'Save',
+                      style: GoogleFonts.jost(),
+                    ),
                   ),
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
                       elevation: 12.0,
-                      textStyle: const TextStyle(
+                      textStyle: GoogleFonts.jost(
                         color: Colors.white,
                       ),
                     ),
-                    child: const Text('Cancel'),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.jost(),
+                    ),
                   ),
                 ],
               )

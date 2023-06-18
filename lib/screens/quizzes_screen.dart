@@ -7,6 +7,7 @@ import 'package:flutter_quizzer/util/sort_quiz.dart';
 import 'package:flutter_quizzer/widgets/quizzes/quiz_sort_dropdown.dart';
 import 'package:flutter_quizzer/widgets/quizzes/quiz_tile.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -70,11 +71,12 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Text(
           'Quiz deleted!',
+          style: GoogleFonts.jost(),
         ),
-        duration: Duration(
+        duration: const Duration(
           milliseconds: 1500,
         ),
         showCloseIcon: true,
@@ -103,7 +105,13 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quizzer!'),
+        title: Text(
+          'Quizzer!',
+          style: GoogleFonts.jost(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
@@ -118,7 +126,13 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        label: const Text('New Quiz'),
+        label: Text(
+          'New Quiz',
+          style: GoogleFonts.jost(
+            fontWeight: FontWeight.w500,
+            fontSize: 15,
+          ),
+        ),
         icon: const Icon(Icons.add),
         onPressed: () {
           showQuizDialog(FormType.create);

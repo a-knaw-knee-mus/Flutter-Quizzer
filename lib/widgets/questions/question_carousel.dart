@@ -28,6 +28,8 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
   @override
   Widget build(BuildContext context) {
     final carouselLength = widget.questionKeys.length;
+    
+    if (carouselLength < 1) return Container();
 
     return SafeArea(
       child: Padding(
@@ -36,7 +38,10 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
           children: [
             Text(
               "Term ${currCarouselPage + 1}/$carouselLength",
-              style: TextStyle(color: primary[800]),
+              style: GoogleFonts.jost(
+                fontSize: 15,
+                color: primary[800],
+              ),
             ),
             SingleChildScrollView(
               child: Column(
