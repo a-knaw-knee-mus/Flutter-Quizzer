@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_flip_card/controllers/flip_card_controllers.dart';
+import 'package:flutter_flip_card/flipcard/flip_card.dart';
+import 'package:flutter_flip_card/flutter_flip_card.dart';
+import 'package:flutter_quizzer/schema/question.dart';
+import 'package:flutter_quizzer/util/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class QuestionCarousel extends StatefulWidget {
-  const QuestionCarousel({super.key});
+  final List questionKeys;
+
+  const QuestionCarousel({
+    super.key,
+    required this.questionKeys,
+  });
 
   @override
   State<QuestionCarousel> createState() => _QuestionCarouselState();
@@ -10,144 +22,108 @@ class QuestionCarousel extends StatefulWidget {
 
 class _QuestionCarouselState extends State<QuestionCarousel> {
   final controller = PageController(viewportFraction: 0.8, keepPage: true);
+  final questionBox = Hive.box<Question>('questionBox');
+  int currCarouselPage = 0;
 
   @override
   Widget build(BuildContext context) {
-    final pages = List.generate(
-        6,
-        (index) => Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Colors.grey.shade300,
-              ),
-              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              child: Container(
-                height: 280,
-                child: Center(
-                    child: Text(
-                  "Page $index",
-                  style: TextStyle(color: Colors.indigo),
-                )),
-              ),
-            ));
+    final carouselLength = widget.questionKeys.length;
 
     return SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(height: 16),
-              SizedBox(
-                height: 240,
-                child: PageView.builder(
-                  controller: controller,
-                  // itemCount: pages.length,
-                  itemBuilder: (_, index) {
-                    return pages[index % pages.length];
-                  },
-                ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Column(
+          children: [
+            Text(
+              "Term ${currCarouselPage + 1}/$carouselLength",
+              style: TextStyle(color: primary[800]),
+            ),
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 200,
+                    child: PageView.builder(
+                      controller: controller,
+                      onPageChanged: (value) {
+                        setState(() {
+                          currCarouselPage = value;
+                        });
+                      },
+                      itemCount: carouselLength,
+                      itemBuilder: (_, index) {
+                        index %= carouselLength;
+                        Question question =
+                            questionBox.get(widget.questionKeys[index])!;
+                        FlipCardController flipCon = FlipCardController();
+                        return FlipCard(
+                          animationDuration: const Duration(milliseconds: 250),
+                          controller: flipCon,
+                          rotateSide: RotateSide.bottom,
+                          axis: FlipAxis.horizontal,
+                          onTapFlipping: true,
+                          frontWidget: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              color: primary[200],
+                            ),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            child: Center(
+                              child: Text(
+                                question.term,
+                                style: GoogleFonts.jost(
+                                  fontSize: 30,
+                                  color: primary[800],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          backWidget: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              color: primary[200],
+                            ),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            child: Center(
+                              child: Text(
+                                question.definition,
+                                style: GoogleFonts.jost(
+                                  fontSize: 30,
+                                  color: primary[800],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  SmoothPageIndicator(
+                    controller: controller,
+                    count: carouselLength,
+                    effect: const ScrollingDotsEffect(
+                      activeStrokeWidth: 3,
+                      activeDotScale: 1.2,
+                      maxVisibleDots: 5,
+                      spacing: 10,
+                      dotHeight: 12,
+                      dotWidth: 12,
+                      fixedCenter: true,
+                      dotColor: primary,
+                      activeDotColor: primary,
+                    ),
+                  ),
+                ],
               ),
-              SmoothPageIndicator(
-                controller: controller,
-                count: pages.length,
-                effect: const WormEffect(
-                  dotHeight: 16,
-                  dotWidth: 16,
-                  type: WormType.thinUnderground,
-                ),
-              ),
-              //
-              // Padding(
-              //   padding: const EdgeInsets.only(top: 16, bottom: 8),
-              //   child: Text(
-              //     'Jumping Dot',
-              //     style: TextStyle(color: Colors.black54),
-              //   ),
-              // ),
-              // Container(
-              //   child: SmoothPageIndicator(
-              //     controller: controller,
-              //     count: pages.length,
-              //     effect: JumpingDotEffect(
-              //       dotHeight: 16,
-              //       dotWidth: 16,
-              //       jumpScale: .7,
-              //       verticalOffset: 15,
-              //     ),
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.only(top: 16, bottom: 12),
-              //   child: Text(
-              //     'Scrolling Dots',
-              //     style: TextStyle(color: Colors.black54),
-              //   ),
-              // ),
-              // SmoothPageIndicator(
-              //     controller: controller,
-              //     count: pages.length,
-              //     effect: ScrollingDotsEffect(
-              //       activeStrokeWidth: 2.6,
-              //       activeDotScale: 1.3,
-              //       maxVisibleDots: 5,
-              //       radius: 8,
-              //       spacing: 10,
-              //       dotHeight: 12,
-              //       dotWidth: 12,
-              //     )),
-              // Padding(
-              //   padding: const EdgeInsets.only(top: 16, bottom: 16),
-              //   child: Text(
-              //     'Customizable Effect',
-              //     style: TextStyle(color: Colors.black54),
-              //   ),
-              // ),
-              // Container(
-              //   // color: Colors.red.withOpacity(.4),
-              //   child: SmoothPageIndicator(
-              //     controller: controller,
-              //     count: pages.length,
-              //     effect: CustomizableEffect(
-              //       activeDotDecoration: DotDecoration(
-              //         width: 32,
-              //         height: 12,
-              //         color: Colors.indigo,
-              //         rotationAngle: 180,
-              //         verticalOffset: -10,
-              //         borderRadius: BorderRadius.circular(24),
-              //         // dotBorder: DotBorder(
-              //         //   padding: 2,
-              //         //   width: 2,
-              //         //   color: Colors.indigo,
-              //         // ),
-              //       ),
-              //       dotDecoration: DotDecoration(
-              //         width: 24,
-              //         height: 12,
-              //         color: Colors.grey,
-              //         // dotBorder: DotBorder(
-              //         //   padding: 2,
-              //         //   width: 2,
-              //         //   color: Colors.grey,
-              //         // ),
-              //         // borderRadius: BorderRadius.only(
-              //         //     topLeft: Radius.circular(2),
-              //         //     topRight: Radius.circular(16),
-              //         //     bottomLeft: Radius.circular(16),
-              //         //     bottomRight: Radius.circular(2)),
-              //         borderRadius: BorderRadius.circular(16),
-              //         verticalOffset: 0,
-              //       ),
-              //       spacing: 6.0,
-              //       // activeColorOverride: (i) => colors[i],
-              //       inActiveColorOverride: (i) => colors[i],
-              //     ),
-              //   ),
-              // ),
-              // const SizedBox(height: 32.0),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
     );
   }
 }

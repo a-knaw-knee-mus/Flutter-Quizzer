@@ -172,55 +172,76 @@ class _QuizScreenState extends State<QuizScreen> {
           }).toList();
           return Column(
             children: [
-              const QuestionCarousel(),
+              QuestionCarousel(questionKeys: questionKeys,),
               Expanded(
-                child: ListView.builder(
-                  itemCount: questionKeys.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == questionKeys.length) {
-                      return SizedBox(height: 65);
-                    }
-
-                    final questionId = questionKeys[index];
-                    Question question = questionBox.get(questionId)!;
-
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        top: 20.0,
-                        right: 60.0,
-                      ),
-                      child: Slidable(
-                        startActionPane: ActionPane(
-                          motion: const DrawerMotion(),
-                          extentRatio: 0.3,
-                          children: [
-                            SlidableAction(
-                              onPressed: (context) {
-                                deleteQuestion(questionId);
-                              },
-                              icon: Icons.delete,
-                              backgroundColor: Colors.red,
-                            ),
-                            SlidableAction(
-                              onPressed: (context) {
-                                showQuestionDialog(
-                                  FormType.edit,
-                                  questionId: questionId,
-                                  question: question,
-                                );
-                              },
-                              icon: Icons.edit,
-                              backgroundColor: Colors.green,
-                            ),
-                          ],
-                        ),
-                        child: QuestionTile(
-                          term: question.term,
-                          definition: question.definition,
-                        ),
-                      ),
-                    );
+                child: ShaderMask(
+                  shaderCallback: (Rect rect) {
+                    return const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.red, // arbitrary
+                        Colors.transparent,
+                        Colors.transparent,
+                        Colors.red, // arbitrary
+                      ],
+                      stops: [
+                        0.0,
+                        0.04,
+                        0.88,
+                        1.0
+                      ], // 10% purple, 80% transparent, 10% purple
+                    ).createShader(rect);
                   },
+                  blendMode: BlendMode.dstOut,
+                  child: ListView.builder(
+                    itemCount: questionKeys.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == questionKeys.length) {
+                        return SizedBox(height: 65);
+                      }
+
+                      final questionId = questionKeys[index];
+                      Question question = questionBox.get(questionId)!;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          top: 20.0,
+                          right: 60.0,
+                        ),
+                        child: Slidable(
+                          startActionPane: ActionPane(
+                            motion: const DrawerMotion(),
+                            extentRatio: 0.3,
+                            children: [
+                              SlidableAction(
+                                onPressed: (context) {
+                                  deleteQuestion(questionId);
+                                },
+                                icon: Icons.delete,
+                                backgroundColor: Colors.red,
+                              ),
+                              SlidableAction(
+                                onPressed: (context) {
+                                  showQuestionDialog(
+                                    FormType.edit,
+                                    questionId: questionId,
+                                    question: question,
+                                  );
+                                },
+                                icon: Icons.edit,
+                                backgroundColor: Colors.green,
+                              ),
+                            ],
+                          ),
+                          child: QuestionTile(
+                            term: question.term,
+                            definition: question.definition,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
