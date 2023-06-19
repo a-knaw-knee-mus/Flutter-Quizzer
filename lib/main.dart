@@ -26,7 +26,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Navigation with Arguments',
       home: const MyPage(),
-      theme: ThemeData(primarySwatch: primary),
+      theme: ThemeData(
+        primarySwatch: primary,
+        textTheme: GoogleFonts.jostTextTheme(),
+      ),
       debugShowCheckedModeBanner: false,
     );
   }
