@@ -137,7 +137,7 @@ class _QuestionDialogState extends State<QuestionDialog> {
             children: [
               Text(
                 getDialogTitle(),
-                style: GoogleFonts.jost(
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -148,7 +148,6 @@ class _QuestionDialogState extends State<QuestionDialog> {
                 keyboardType: TextInputType.multiline,
                 minLines: 1,
                 maxLines: 2,
-                style: GoogleFonts.jost(),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Term',
@@ -166,7 +165,6 @@ class _QuestionDialogState extends State<QuestionDialog> {
                 keyboardType: TextInputType.multiline,
                 minLines: 1,
                 maxLines: 2,
-                style: GoogleFonts.jost(),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Definition',
@@ -186,7 +184,7 @@ class _QuestionDialogState extends State<QuestionDialog> {
                     onPressed: onSave,
                     style: ElevatedButton.styleFrom(
                       elevation: 12.0,
-                      textStyle: GoogleFonts.jost(
+                      textStyle: const TextStyle(
                         color: Colors.white,
                       ),
                     ),
@@ -199,7 +197,7 @@ class _QuestionDialogState extends State<QuestionDialog> {
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
                       elevation: 12.0,
-                      textStyle: GoogleFonts.jost(
+                      textStyle: const TextStyle(
                         color: Colors.white,
                       ),
                     ),

@@ -105,9 +105,9 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Quizzer!',
-          style: GoogleFonts.jost(
+          style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,
           ),
@@ -126,9 +126,9 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        label: Text(
+        label: const Text(
           'New Quiz',
-          style: GoogleFonts.jost(
+          style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 15,
           ),

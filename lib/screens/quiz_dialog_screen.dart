@@ -135,7 +135,7 @@ class _QuizDialogState extends State<QuizDialog> {
             children: [
               Text(
                 getDialogTitle(),
-                style: GoogleFonts.jost(
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -146,7 +146,6 @@ class _QuizDialogState extends State<QuizDialog> {
                 keyboardType: TextInputType.multiline,
                 minLines: 1,
                 maxLines: 2,
-                style: GoogleFonts.jost(),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Quiz Name',
@@ -164,7 +163,6 @@ class _QuizDialogState extends State<QuizDialog> {
                 keyboardType: TextInputType.multiline,
                 minLines: 1,
                 maxLines: 3,
-                style: GoogleFonts.jost(),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Quiz Description',
@@ -184,7 +182,7 @@ class _QuizDialogState extends State<QuizDialog> {
                     onPressed: onSave,
                     style: ElevatedButton.styleFrom(
                       elevation: 12.0,
-                      textStyle: GoogleFonts.jost(
+                      textStyle: const TextStyle(
                         color: Colors.white,
                       ),
                     ),
@@ -197,7 +195,7 @@ class _QuizDialogState extends State<QuizDialog> {
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
                       elevation: 12.0,
-                      textStyle: GoogleFonts.jost(
+                      textStyle: const TextStyle(
                         color: Colors.white,
                       ),
                     ),

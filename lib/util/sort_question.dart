@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/schema/question.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 enum QuestionSortType {
@@ -22,49 +21,49 @@ extension QuestionSortExtension on QuestionSortType {
         return Row(
           children: [
             const Icon(Icons.arrow_upward_rounded),
-            Text(' Term', style: GoogleFonts.jost(color: textColor)),
+            Text(' Term', style: TextStyle(color: textColor)),
           ],
         );
       case QuestionSortType.termDesc:
         return Row(
           children: [
             const Icon(Icons.arrow_downward_rounded),
-            Text(' Term', style: GoogleFonts.jost(color: textColor)),
+            Text(' Term', style: TextStyle(color: textColor)),
           ],
         );
       case QuestionSortType.createdDateAsc:
         return Row(
           children: [
             const Icon(Icons.arrow_upward_rounded),
-            Text(' Created Date', style: GoogleFonts.jost(color: textColor)),
+            Text(' Created Date', style: TextStyle(color: textColor)),
           ],
         );
       case QuestionSortType.createdDateDesc:
         return Row(
           children: [
             const Icon(Icons.arrow_downward_rounded),
-            Text(' Created Date', style: GoogleFonts.jost(color: textColor)),
+            Text(' Created Date', style: TextStyle(color: textColor)),
           ],
         );
       case QuestionSortType.updatedDateAsc:
         return Row(
           children: [
             const Icon(Icons.arrow_upward_rounded),
-            Text(' Updated Date', style: GoogleFonts.jost(color: textColor)),
+            Text(' Updated Date', style: TextStyle(color: textColor)),
           ],
         );
       case QuestionSortType.updatedDateDesc:
         return Row(
           children: [
             const Icon(Icons.arrow_downward_rounded),
-            Text(' Updated Date', style: GoogleFonts.jost(color: textColor)),
+            Text(' Updated Date', style: TextStyle(color: textColor)),
           ],
         );
       default:
         return Row(
           children: [
             const Icon(Icons.close),
-            Text(' Invalid Sort Type', style: GoogleFonts.jost(color: textColor)),
+            Text(' Invalid Sort Type', style: TextStyle(color: textColor)),
           ],
         );
     }

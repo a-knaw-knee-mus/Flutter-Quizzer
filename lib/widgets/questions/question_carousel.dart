@@ -4,7 +4,6 @@ import 'package:flutter_flip_card/flipcard/flip_card.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/util/colors.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -38,7 +37,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
           children: [
             Text(
               "Term ${currCarouselPage + 1}/$carouselLength",
-              style: GoogleFonts.jost(
+              style: TextStyle(
                 fontSize: 15,
                 color: primary[800],
               ),
@@ -78,10 +77,10 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                             child: Center(
                               child: Text(
                                 question.term,
-                                style: GoogleFonts.jost(
+                                style: TextStyle(
                                   fontSize: 30,
                                   color: primary[800],
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
@@ -96,10 +95,10 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                             child: Center(
                               child: Text(
                                 question.definition,
-                                style: GoogleFonts.jost(
+                                style: TextStyle(
                                   fontSize: 30,
                                   color: primary[800],
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),

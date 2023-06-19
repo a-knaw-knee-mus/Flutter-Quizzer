@@ -124,14 +124,14 @@ class _QuizScreenState extends State<QuizScreen> {
           children: [
             Text(
               quiz.name,
-              style: GoogleFonts.jost(
+              style: const TextStyle(
                 fontSize: 22,
               ),
               overflow: TextOverflow.fade,
             ),
             Text(
               quiz.description,
-              style: GoogleFonts.jost(
+              style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),
@@ -154,9 +154,9 @@ class _QuizScreenState extends State<QuizScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        label: Text(
+        label: const Text(
           'New Question',
-          style: GoogleFonts.jost(
+          style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 15,
           ),
