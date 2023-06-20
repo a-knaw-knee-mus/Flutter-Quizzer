@@ -1,4 +1,4 @@
-1. Save preferences for the desired color theme
+1. ~~Save preferences for the desired color theme~~
 1. When the user sets a sort type (for quiz and question seperately) it should be saved in Hive under the preferences box
 1. Set a placeholder for when there are no quizzes/questions
 1. Star certain quizzes to show them at the top of the list
