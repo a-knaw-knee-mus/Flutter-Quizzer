@@ -34,6 +34,7 @@ void main() async {
   await Hive.openBox<Quiz>('quizBox');
   Hive.registerAdapter(QuestionAdapter());
   await Hive.openBox<Question>('questionBox');
+  
   runApp(ChangeNotifierProvider(
     create: (context) => ColorProvider(),
     child: const MyApp(),
@@ -49,7 +50,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   _MyAppState() {
-    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ColorProvider>(context, listen: false)
           .init(ColorType.green);

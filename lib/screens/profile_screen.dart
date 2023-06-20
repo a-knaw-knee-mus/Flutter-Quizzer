@@ -4,7 +4,6 @@ import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:provider/provider.dart';
 
-// TODO: option to change side of the cards (left currently)
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 

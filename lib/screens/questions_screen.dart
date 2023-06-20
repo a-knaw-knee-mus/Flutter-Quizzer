@@ -207,8 +207,9 @@ class _QuizScreenState extends State<QuizScreen> {
                   child: ListView.builder(
                     itemCount: questionKeys.length + 1,
                     itemBuilder: (context, index) {
+                      // whitespace at the end
                       if (index == questionKeys.length) {
-                        return SizedBox(height: 65);
+                        return const SizedBox(height: 65);
                       }
 
                       final questionId = questionKeys[index];
