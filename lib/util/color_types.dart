@@ -91,4 +91,29 @@ extension ColorTypeExtension on ColorType {
         return 'Purple';
     }
   }
+
+  static ColorType getColorTypeFromString(String color) {
+    color = color.toLowerCase();
+
+    switch (color) {
+      case 'blue':
+        return ColorType.blue;
+      case 'cyan':
+        return ColorType.cyan;
+      case 'green':
+        return ColorType.green;
+      case 'magenta':
+        return ColorType.magenta;
+      case 'orange':
+        return ColorType.orange;
+      case 'purple':
+        return ColorType.purple;
+      case 'red':
+        return ColorType.red;
+      case 'yellow':
+        return ColorType.yellow;
+      default:
+        return ColorType.purple;
+    }
+  }
 }

@@ -1,7 +1,9 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/main.dart';
+import 'package:flutter_quizzer/schema/preference.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -40,6 +42,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             onChanged: (ColorType? newColor) {
               context.read<ColorProvider>().color = newColor!;
+              Hive.box<Preference>('prefBox').put(
+                  'colorTheme',
+                  Preference(
+                    value: newColor.getName(),
+                  ));
             },
             items: ColorType.values.map((ColorType c) {
               return DropdownMenuItem(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quizzer/schema/preference.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/profile_screen.dart';
@@ -10,20 +11,13 @@ import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 class ColorProvider extends ChangeNotifier {
-  ColorType _color = ColorType.blue;
+  ColorType _color = ColorType.purple;
 
   ColorType get color => _color;
 
   set color(ColorType newColor) {
     _color = newColor;
     notifyListeners();
-  }
-
-  void init(ColorType newColor) {
-    if (_color != newColor) {
-      _color = newColor;
-      notifyListeners();
-    }
   }
 }
 
@@ -34,7 +28,9 @@ void main() async {
   await Hive.openBox<Quiz>('quizBox');
   Hive.registerAdapter(QuestionAdapter());
   await Hive.openBox<Question>('questionBox');
-  
+  Hive.registerAdapter(PreferenceAdapter());
+  await Hive.openBox<Preference>('prefBox');
+
   runApp(ChangeNotifierProvider(
     create: (context) => ColorProvider(),
     child: const MyApp(),
@@ -50,9 +46,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   _MyAppState() {
+    Preference userTheme = Hive.box<Preference>('prefBox').get(
+      'colorTheme',
+      defaultValue: Preference(value: 'purple'),
+    )!;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ColorProvider>(context, listen: false)
-          .init(ColorType.green);
+      Provider.of<ColorProvider>(context, listen: false).color =
+          ColorTypeExtension.getColorTypeFromString(userTheme.value);
     });
   }
 
