@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/questions_screen.dart';
-import 'package:flutter_quizzer/util/colors.dart';
+import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class QuizTile extends StatelessWidget {
   final String quizId;
@@ -20,10 +22,12 @@ class QuizTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MaterialColor themeColor = context.watch<ColorProvider>().color.getColorSwatch();
+
     return Card(
       margin: EdgeInsets.zero,
       elevation: 12,
-      color: primary[400],
+      color: themeColor[400],
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(15),
@@ -66,15 +70,15 @@ class QuizTile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 6.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: primary[500],
-                  border: Border.all(color: primary[900]!, width: 1.5),
+                  color: themeColor[500],
+                  border: Border.all(color: themeColor[900]!, width: 1.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding: const EdgeInsets.all(4),
                 child: Text(
                   '$quizSize term${quizSize != 1 ? 's' : ''}',
                   style: GoogleFonts.jost(
-                    color: primary[100],
+                    color: themeColor[100],
                   ),
                 ),
               ),

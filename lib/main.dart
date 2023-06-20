@@ -3,10 +3,29 @@ import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/profile_screen.dart';
 import 'package:flutter_quizzer/screens/quizzes_screen.dart';
-import 'package:flutter_quizzer/util/colors.dart';
+import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+
+class ColorProvider extends ChangeNotifier {
+  ColorType _color = ColorType.blue;
+
+  ColorType get color => _color;
+
+  set color(ColorType newColor) {
+    _color = newColor;
+    notifyListeners();
+  }
+
+  void init(ColorType newColor) {
+    if (_color != newColor) {
+      _color = newColor;
+      notifyListeners();
+    }
+  }
+}
 
 void main() async {
   // Hive init
@@ -15,11 +34,27 @@ void main() async {
   await Hive.openBox<Quiz>('quizBox');
   Hive.registerAdapter(QuestionAdapter());
   await Hive.openBox<Question>('questionBox');
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (context) => ColorProvider(),
+    child: const MyApp(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  _MyAppState() {
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ColorProvider>(context, listen: false)
+          .init(ColorType.green);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +62,7 @@ class MyApp extends StatelessWidget {
       title: 'Navigation with Arguments',
       home: const MyPage(),
       theme: ThemeData(
-        primarySwatch: primary,
+        primarySwatch: context.watch<ColorProvider>().color.getColorSwatch(),
         textTheme: GoogleFonts.jostTextTheme(),
       ),
       debugShowCheckedModeBanner: false,
@@ -65,9 +100,9 @@ class _MyPageState extends State<MyPage> {
             ),
           ),
           SalomonBottomBarItem(
-            icon: const Icon(Icons.person),
+            icon: const Icon(Icons.settings),
             title: Text(
-              'Profile',
+              'Settings',
               style: GoogleFonts.jost(),
             ),
           ),

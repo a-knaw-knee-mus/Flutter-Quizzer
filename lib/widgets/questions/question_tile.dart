@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quizzer/util/colors.dart';
+import 'package:flutter_quizzer/main.dart';
+import 'package:flutter_quizzer/util/color_types.dart';
+import 'package:provider/provider.dart';
 
 class QuestionTile extends StatelessWidget {
   final String term;
@@ -13,10 +15,12 @@ class QuestionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MaterialColor themeColor = context.watch<ColorProvider>().color.getColorSwatch();
+
     return Card(
       margin: EdgeInsets.zero,
       elevation: 12,
-      color: primary[400],
+      color: themeColor[400],
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(15),

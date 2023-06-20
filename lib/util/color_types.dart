@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/colors/blue.dart';
 import 'package:flutter_quizzer/colors/cyan.dart';
@@ -20,6 +21,8 @@ enum ColorType {
 }
 
 extension ColorTypeExtension on ColorType {
+  String get name => describeEnum(this);
+
   MaterialColor getColorSwatch() {
     switch (this) {
       case ColorType.blue:
@@ -40,6 +43,52 @@ extension ColorTypeExtension on ColorType {
         return yellow;
       default:
         return purple;
+    }
+  }
+
+  Color getColor() {
+    switch (this) {
+      case ColorType.blue:
+        return Colors.blue;
+      case ColorType.cyan:
+        return Colors.cyan;
+      case ColorType.green:
+        return Colors.green;
+      case ColorType.magenta:
+        return const Color.fromARGB(255, 116, 27, 71);
+      case ColorType.orange:
+        return Colors.orange;
+      case ColorType.purple:
+        return Colors.purple;
+      case ColorType.red:
+        return Colors.red;
+      case ColorType.yellow:
+        return Colors.yellow;
+      default:
+        return Colors.blue;
+    }
+  }
+
+  String getName() {
+    switch (this) {
+      case ColorType.blue:
+        return 'Blue';
+      case ColorType.cyan:
+        return 'Cyan';
+      case ColorType.green:
+        return 'Green';
+      case ColorType.magenta:
+        return 'Magenta';
+      case ColorType.orange:
+        return 'Orange';
+      case ColorType.purple:
+        return 'Purple';
+      case ColorType.red:
+        return 'Red';
+      case ColorType.yellow:
+        return 'Yellow';
+      default:
+        return 'Purple';
     }
   }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_flip_card/controllers/flip_card_controllers.dart';
-import 'package:flutter_flip_card/flipcard/flip_card.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
+import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/schema/question.dart';
-import 'package:flutter_quizzer/util/colors.dart';
+import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class QuestionCarousel extends StatefulWidget {
@@ -26,6 +26,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    MaterialColor themeColor = context.watch<ColorProvider>().color.getColorSwatch();
     final carouselLength = widget.questionKeys.length;
     
     if (carouselLength < 1) return Container();
@@ -39,7 +40,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
               "Term ${currCarouselPage + 1}/$carouselLength",
               style: TextStyle(
                 fontSize: 15,
-                color: primary[800],
+                color: themeColor[800],
               ),
             ),
             SingleChildScrollView(
@@ -70,7 +71,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                           frontWidget: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
-                              color: primary[200],
+                              color: themeColor[200],
                             ),
                             margin: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 4),
@@ -79,7 +80,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                                 question.term,
                                 style: TextStyle(
                                   fontSize: 30,
-                                  color: primary[800],
+                                  color: themeColor[800],
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -88,7 +89,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                           backWidget: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
-                              color: primary[200],
+                              color: themeColor[200],
                             ),
                             margin: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 4),
@@ -97,7 +98,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                                 question.definition,
                                 style: TextStyle(
                                   fontSize: 30,
-                                  color: primary[800],
+                                  color: themeColor[800],
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -110,7 +111,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                   SmoothPageIndicator(
                     controller: controller,
                     count: carouselLength,
-                    effect: const ScrollingDotsEffect(
+                    effect: ScrollingDotsEffect(
                       activeStrokeWidth: 3,
                       activeDotScale: 1.2,
                       maxVisibleDots: 5,
@@ -118,8 +119,8 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                       dotHeight: 12,
                       dotWidth: 12,
                       fixedCenter: true,
-                      dotColor: primary,
-                      activeDotColor: primary,
+                      dotColor: themeColor,
+                      activeDotColor: themeColor,
                     ),
                   ),
                 ],
