@@ -181,46 +181,72 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
           builder: (context, quizzes, _) {
             final List sortedIds = sortType.sortQuizIds(quizzes);
             // TODO: add shadow like I did on questions screen
-            return ListView.builder(
-              itemCount: sortedIds.length,
-              itemBuilder: (context, index) {
-                final quizId = sortedIds[index];
-                final quiz = quizzes.get(quizId)!;
-                final questionBox = Hive.box<Question>('questionBox');
-                int quizSize = questionBox.values.where((question) {
-                  return question.quizId == quizId;
-                }).length;
-
-                void modifyCount(int change) {
-                  setState(() {
-                    quizSize += change;
-                  });
-                }
-
-                return Padding(
-                  padding: EdgeInsets.only(
-                    top: 20.0,
-                    right: alignType == AlignType.left ? 60.0 : 0,
-                    left: alignType == AlignType.right ? 60.0 : 0,
-                  ),
-                  child: Slidable(
-                    startActionPane: alignType == AlignType.left
-                        ? getActionPane(
-                            deleteQuiz, showQuizDialog, quizId, quiz)
-                        : null,
-                    endActionPane: alignType == AlignType.right
-                        ? getActionPane(
-                            deleteQuiz, showQuizDialog, quizId, quiz)
-                        : null,
-                    child: QuizTile(
-                      quiz: quiz,
-                      quizId: quizId,
-                      modifyCount: modifyCount,
-                      quizSize: quizSize,
-                    ),
-                  ),
-                );
+            return ShaderMask(
+              shaderCallback: (Rect rect) {
+                return const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.red, // arbitrary
+                    Colors.transparent,
+                    Colors.transparent,
+                    Colors.red, // arbitrary
+                  ],
+                  stops: [
+                    0.0,
+                    0.03,
+                    0.91,
+                    1.0
+                  ], // 10% purple, 80% transparent, 10% purple
+                ).createShader(rect);
               },
+              blendMode: BlendMode.dstOut,
+              child: ListView.builder(
+                itemCount: sortedIds.length + 1,
+                itemBuilder: (context, index) {
+                  // whitespace at the end
+                  if (index == sortedIds.length) {
+                    return const SizedBox(height: 65);
+                  }
+
+                  final quizId = sortedIds[index];
+                  final quiz = quizzes.get(quizId)!;
+                  final questionBox = Hive.box<Question>('questionBox');
+                  int quizSize = questionBox.values.where((question) {
+                    return question.quizId == quizId;
+                  }).length;
+
+                  void modifyCount(int change) {
+                    setState(() {
+                      quizSize += change;
+                    });
+                  }
+
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      top: 20.0,
+                      right: alignType == AlignType.left ? 60.0 : 0,
+                      left: alignType == AlignType.right ? 60.0 : 0,
+                    ),
+                    child: Slidable(
+                      startActionPane: alignType == AlignType.left
+                          ? getActionPane(
+                              deleteQuiz, showQuizDialog, quizId, quiz)
+                          : null,
+                      endActionPane: alignType == AlignType.right
+                          ? getActionPane(
+                              deleteQuiz, showQuizDialog, quizId, quiz)
+                          : null,
+                      child: QuizTile(
+                        quiz: quiz,
+                        quizId: quizId,
+                        modifyCount: modifyCount,
+                        quizSize: quizSize,
+                      ),
+                    ),
+                  );
+                },
+              ),
             );
           }),
     );
