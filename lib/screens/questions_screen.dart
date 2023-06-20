@@ -216,6 +216,26 @@ class _QuizScreenState extends State<QuizScreen> {
             }
             return false;
           }).toList();
+          if (questionKeys.isEmpty) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.only(top: 642),
+                child: Column(
+                  children: [
+                    Text(
+                      'Your quiz is empty. Add a question below!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Icon(Icons.arrow_downward_rounded, size: 40),
+                  ],
+                ),
+              ),
+            );
+          }
+
           return Column(
             children: [
               QuestionCarousel(
@@ -233,12 +253,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         Colors.transparent,
                         Colors.red, // arbitrary
                       ],
-                      stops: [
-                        0.0,
-                        0.04,
-                        0.88,
-                        1.0
-                      ], // 10% purple, 80% transparent, 10% purple
+                      stops: [0.0, 0.04, 0.88, 1.0],
                     ).createShader(rect);
                   },
                   blendMode: BlendMode.dstOut,

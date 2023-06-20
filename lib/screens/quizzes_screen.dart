@@ -180,25 +180,44 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
           valueListenable: Hive.box<Quiz>('quizBox').listenable(),
           builder: (context, quizzes, _) {
             final List sortedIds = sortType.sortQuizIds(quizzes);
-            // TODO: add shadow like I did on questions screen
+            
+            if (sortedIds.isEmpty) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 600),
+                  child: Column(
+                    children: [
+                      Text(
+                        'You have no quizzes. Add a quiz below!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Icon(Icons.arrow_downward_rounded, size: 40),
+                    ],
+                  ),
+                ),
+              );
+            }
+
             return ShaderMask(
               shaderCallback: (Rect rect) {
                 return const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.red, // arbitrary
-                    Colors.transparent,
-                    Colors.transparent,
-                    Colors.red, // arbitrary
-                  ],
-                  stops: [
-                    0.0,
-                    0.03,
-                    0.91,
-                    1.0
-                  ], // 10% purple, 80% transparent, 10% purple
-                ).createShader(rect);
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.red, // arbitrary
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.red, // arbitrary
+                    ],
+                    stops: [
+                      0.0,
+                      0.03,
+                      0.91,
+                      1.0
+                    ]).createShader(rect);
               },
               blendMode: BlendMode.dstOut,
               child: ListView.builder(
