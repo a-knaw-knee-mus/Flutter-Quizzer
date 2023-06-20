@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quizzer/main.dart';
+import 'package:flutter_quizzer/util/align_types.dart';
 import 'package:flutter_quizzer/util/form_types.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
@@ -10,6 +12,7 @@ import 'package:flutter_quizzer/widgets/questions/question_tile.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -115,8 +118,43 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
+  ActionPane getActionPane(
+    Function(String) deleteQuestion,
+    Function(FormType, {Question question, String questionId})
+        showQuestionDialog,
+    String questionId,
+    Question question,
+  ) {
+    return ActionPane(
+      motion: const DrawerMotion(),
+      extentRatio: 0.3,
+      children: [
+        SlidableAction(
+          onPressed: (context) {
+            deleteQuestion(questionId);
+          },
+          icon: Icons.delete,
+          backgroundColor: Colors.red,
+        ),
+        SlidableAction(
+          onPressed: (context) {
+            showQuestionDialog(
+              FormType.edit,
+              questionId: questionId,
+              question: question,
+            );
+          },
+          icon: Icons.edit,
+          backgroundColor: Colors.green,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    AlignType alignType = context.watch<AlignProvider>().alignType;
+
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -216,35 +254,20 @@ class _QuizScreenState extends State<QuizScreen> {
                       Question question = questionBox.get(questionId)!;
 
                       return Padding(
-                        padding: const EdgeInsets.only(
+                        padding: EdgeInsets.only(
                           top: 20.0,
-                          right: 60.0,
+                          right: alignType == AlignType.left ? 60.0 : 0,
+                          left: alignType == AlignType.right ? 60.0 : 0,
                         ),
                         child: Slidable(
-                          startActionPane: ActionPane(
-                            motion: const DrawerMotion(),
-                            extentRatio: 0.3,
-                            children: [
-                              SlidableAction(
-                                onPressed: (context) {
-                                  deleteQuestion(questionId);
-                                },
-                                icon: Icons.delete,
-                                backgroundColor: Colors.red,
-                              ),
-                              SlidableAction(
-                                onPressed: (context) {
-                                  showQuestionDialog(
-                                    FormType.edit,
-                                    questionId: questionId,
-                                    question: question,
-                                  );
-                                },
-                                icon: Icons.edit,
-                                backgroundColor: Colors.green,
-                              ),
-                            ],
-                          ),
+                          startActionPane: alignType == AlignType.left
+                              ? getActionPane(deleteQuestion,
+                                  showQuestionDialog, questionId, question)
+                              : null,
+                          endActionPane: alignType == AlignType.right
+                              ? getActionPane(deleteQuestion,
+                                  showQuestionDialog, questionId, question)
+                              : null,
                           child: QuestionTile(
                             term: question.term,
                             definition: question.definition,

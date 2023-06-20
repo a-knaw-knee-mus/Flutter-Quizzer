@@ -4,6 +4,7 @@ import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/profile_screen.dart';
 import 'package:flutter_quizzer/screens/quizzes_screen.dart';
+import 'package:flutter_quizzer/util/align_types.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -21,6 +22,17 @@ class ColorProvider extends ChangeNotifier {
   }
 }
 
+class AlignProvider extends ChangeNotifier {
+  AlignType _alignType = AlignType.left;
+
+  AlignType get alignType => _alignType;
+
+  set alignType(AlignType newAlignType) {
+    _alignType = newAlignType;
+    notifyListeners();
+  }
+}
+
 void main() async {
   // Hive init
   await Hive.initFlutter();
@@ -31,10 +43,19 @@ void main() async {
   Hive.registerAdapter(PreferenceAdapter());
   await Hive.openBox<Preference>('prefBox');
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => ColorProvider(),
-    child: const MyApp(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ColorProvider>(
+          create: (context) => ColorProvider(),
+        ),
+        ChangeNotifierProvider<AlignProvider>(
+          create: (context) => AlignProvider(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -46,11 +67,18 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   _MyAppState() {
-    Preference userTheme = Hive.box<Preference>('prefBox').get(
+    final prefBox = Hive.box<Preference>('prefBox');
+    Preference userTheme = prefBox.get(
       'colorTheme',
       defaultValue: Preference(value: 'purple'),
     )!;
+    Preference alignType = prefBox.get(
+      'alignTheme',
+      defaultValue: Preference(value: 'left'),
+    )!;
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AlignProvider>(context, listen: false).alignType =
+          AlignTypeExtension.getAlignTypeFromString(alignType.value);
       Provider.of<ColorProvider>(context, listen: false).color =
           ColorTypeExtension.getColorTypeFromString(userTheme.value);
     });

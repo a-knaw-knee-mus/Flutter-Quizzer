@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/quiz_dialog_screen.dart';
+import 'package:flutter_quizzer/util/align_types.dart';
 import 'package:flutter_quizzer/util/form_types.dart';
 import 'package:flutter_quizzer/util/sort_quiz.dart';
 import 'package:flutter_quizzer/widgets/quizzes/quiz_sort_dropdown.dart';
@@ -9,6 +11,7 @@ import 'package:flutter_quizzer/widgets/quizzes/quiz_tile.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class QuizzesScreen extends StatefulWidget {
@@ -101,8 +104,42 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
     );
   }
 
+  ActionPane getActionPane(
+    Function(String) deleteQuiz,
+    Function(FormType, {Quiz quiz, String quizId}) showQuizDialog,
+    String quizId,
+    Quiz quiz,
+  ) {
+    return ActionPane(
+      motion: const DrawerMotion(),
+      extentRatio: 0.3,
+      children: [
+        SlidableAction(
+          onPressed: (context) {
+            deleteQuiz(quizId);
+          },
+          icon: Icons.delete,
+          backgroundColor: Colors.red,
+        ),
+        SlidableAction(
+          onPressed: (context) {
+            showQuizDialog(
+              FormType.edit,
+              quiz: quiz,
+              quizId: quizId,
+            );
+          },
+          icon: Icons.edit,
+          backgroundColor: Colors.green,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    AlignType alignType = context.watch<AlignProvider>().alignType;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -143,6 +180,7 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
           valueListenable: Hive.box<Quiz>('quizBox').listenable(),
           builder: (context, quizzes, _) {
             final List sortedIds = sortType.sortQuizIds(quizzes);
+            // TODO: add shadow like I did on questions screen
             return ListView.builder(
               itemCount: sortedIds.length,
               itemBuilder: (context, index) {
@@ -160,35 +198,20 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                 }
 
                 return Padding(
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                     top: 20.0,
-                    right: 60.0,
+                    right: alignType == AlignType.left ? 60.0 : 0,
+                    left: alignType == AlignType.right ? 60.0 : 0,
                   ),
                   child: Slidable(
-                    startActionPane: ActionPane(
-                      motion: const DrawerMotion(),
-                      extentRatio: 0.3,
-                      children: [
-                        SlidableAction(
-                          onPressed: (context) {
-                            deleteQuiz(quizId);
-                          },
-                          icon: Icons.delete,
-                          backgroundColor: Colors.red,
-                        ),
-                        SlidableAction(
-                          onPressed: (context) {
-                            showQuizDialog(
-                              FormType.edit,
-                              quiz: quiz,
-                              quizId: quizId,
-                            );
-                          },
-                          icon: Icons.edit,
-                          backgroundColor: Colors.green,
-                        ),
-                      ],
-                    ),
+                    startActionPane: alignType == AlignType.left
+                        ? getActionPane(
+                            deleteQuiz, showQuizDialog, quizId, quiz)
+                        : null,
+                    endActionPane: alignType == AlignType.right
+                        ? getActionPane(
+                            deleteQuiz, showQuizDialog, quizId, quiz)
+                        : null,
                     child: QuizTile(
                       quiz: quiz,
                       quizId: quizId,
@@ -200,6 +223,49 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
               },
             );
           }),
+    );
+  }
+}
+
+class TileActions extends StatelessWidget {
+  final void Function(String) deleteQuiz;
+  final void Function(FormType, {Quiz quiz, String quizId}) showQuizDialog;
+  final String quizId;
+  final Quiz quiz;
+
+  const TileActions({
+    super.key,
+    required this.deleteQuiz,
+    required this.showQuizDialog,
+    required this.quizId,
+    required this.quiz,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ActionPane(
+      motion: const DrawerMotion(),
+      extentRatio: 0.3,
+      children: [
+        SlidableAction(
+          onPressed: (context) {
+            deleteQuiz(quizId);
+          },
+          icon: Icons.delete,
+          backgroundColor: Colors.red,
+        ),
+        SlidableAction(
+          onPressed: (context) {
+            showQuizDialog(
+              FormType.edit,
+              quiz: quiz,
+              quizId: quizId,
+            );
+          },
+          icon: Icons.edit,
+          backgroundColor: Colors.green,
+        ),
+      ],
     );
   }
 }
