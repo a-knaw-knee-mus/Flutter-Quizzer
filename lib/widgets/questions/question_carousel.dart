@@ -9,10 +9,12 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class QuestionCarousel extends StatefulWidget {
   final List questionKeys;
+  final bool starredOnly;
 
   const QuestionCarousel({
     super.key,
     required this.questionKeys,
+    required this.starredOnly,
   });
 
   @override
@@ -26,9 +28,18 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    MaterialColor themeColor = context.watch<ColorProvider>().color.getColorSwatch();
-    final carouselLength = widget.questionKeys.length;
-    
+    MaterialColor themeColor =
+        context.watch<ColorProvider>().color.getColorSwatch();
+    final questionBox = Hive.box<Question>('questionBox');
+    List questionKeysFiltered = widget.questionKeys;
+    if (widget.starredOnly) {
+      questionKeysFiltered = widget.questionKeys.where(
+        (key) {
+          return questionBox.get(key)!.isStarred;
+        },
+      ).toList();
+    }
+    final carouselLength = questionKeysFiltered.length;
     if (carouselLength < 1) return Container();
 
     return SafeArea(
@@ -37,7 +48,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
         child: Column(
           children: [
             Text(
-              "Term ${currCarouselPage + 1}/$carouselLength",
+              "${widget.starredOnly ? 'Starred ': ''}Term ${currCarouselPage + 1}/$carouselLength",
               style: TextStyle(
                 fontSize: 15,
                 color: themeColor[800],
@@ -60,7 +71,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                       itemBuilder: (_, index) {
                         index %= carouselLength;
                         Question question =
-                            questionBox.get(widget.questionKeys[index])!;
+                            questionBox.get(questionKeysFiltered[index])!;
                         FlipCardController flipCon = FlipCardController();
                         return FlipCard(
                           animationDuration: const Duration(milliseconds: 250),
@@ -99,7 +110,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                                 style: TextStyle(
                                   fontSize: 30,
                                   color: themeColor[800],
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ),

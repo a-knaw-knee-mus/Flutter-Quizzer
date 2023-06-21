@@ -34,6 +34,7 @@ class _QuizScreenState extends State<QuizScreen> {
   late final Quiz quiz = quizBox.get(widget.quizId)!;
   final questionBox = Hive.box<Question>('questionBox');
   QuestionSortType sortType = QuestionSortType.termAsc;
+  bool starredOnly = false;
 
   void saveNewQuestion(
     String term,
@@ -48,6 +49,7 @@ class _QuizScreenState extends State<QuizScreen> {
           quizId: widget.quizId,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
+          isStarred: false,
         ),
       );
     });
@@ -61,6 +63,8 @@ class _QuizScreenState extends State<QuizScreen> {
     String questionId,
     DateTime ogCreatedAt,
   ) {
+    bool isStarred =
+        Hive.box<Question>('questionBox').get(widget.quizId)!.isStarred;
     setState(() {
       questionBox.put(
         questionId,
@@ -70,9 +74,40 @@ class _QuizScreenState extends State<QuizScreen> {
           quizId: widget.quizId,
           createdAt: ogCreatedAt,
           updatedAt: DateTime.now(),
+          isStarred: isStarred,
         ),
       );
     });
+  }
+
+  void toggleStarred(Question question, String questionId) {
+    setState(() {
+      questionBox.put(
+        questionId,
+        Question(
+          term: question.term,
+          definition: question.definition,
+          quizId: widget.quizId,
+          createdAt: question.createdAt,
+          updatedAt: question.updatedAt,
+          isStarred: !question.isStarred,
+        ),
+      );
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '${question.term} has been ${question.isStarred ? 'unstarred' : 'starred'}',
+          style: GoogleFonts.jost(color: Colors.black),
+        ),
+        duration: const Duration(
+          milliseconds: 1500,
+        ),
+        showCloseIcon: true,
+        backgroundColor: Colors.yellow,
+      ),
+    );
   }
 
   void deleteQuestion(String questionId) {
@@ -127,7 +162,6 @@ class _QuizScreenState extends State<QuizScreen> {
   ) {
     return ActionPane(
       motion: const DrawerMotion(),
-      extentRatio: 0.3,
       children: [
         SlidableAction(
           onPressed: (context) {
@@ -147,6 +181,15 @@ class _QuizScreenState extends State<QuizScreen> {
           icon: Icons.edit,
           backgroundColor: Colors.green,
         ),
+        SlidableAction(
+          onPressed: (context) {
+            toggleStarred(question, questionId);
+          },
+          icon: question.isStarred
+              ? Icons.star_rate_rounded
+              : Icons.star_border_rounded,
+          backgroundColor: Colors.yellow,
+        )
       ],
     );
   }
@@ -160,35 +203,49 @@ class _QuizScreenState extends State<QuizScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              quiz.name,
-              style: const TextStyle(
-                fontSize: 22,
+            Tooltip(
+              message: quiz.name,
+              child: Text(
+                quiz.name,
+                style: const TextStyle(
+                  fontSize: 22,
+                ),
+                overflow: TextOverflow.fade,
               ),
-              overflow: TextOverflow.fade,
             ),
-            Text(
-              quiz.description,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
+            Tooltip(
+              message: quiz.description,
+              child: Text(
+                quiz.description,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                ),
+                overflow: TextOverflow.fade,
               ),
-              overflow: TextOverflow.fade,
             ),
           ],
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: QuestionSortDropdown(
-              sortType: sortType,
-              onChanged: (QuestionSortType newSortType) {
-                setState(() {
-                  sortType = newSortType;
-                });
-              },
-            ),
+          QuestionSortDropdown(
+            sortType: sortType,
+            onChanged: (QuestionSortType newSortType) {
+              setState(() {
+                sortType = newSortType;
+              });
+            },
           ),
+          IconButton(
+            icon: starredOnly
+                ? const Icon(Icons.star_rate_rounded)
+                : const Icon(Icons.star_border_rounded),
+            tooltip: 'Toggle starred questions',
+            onPressed: () {
+              setState(() {
+                starredOnly = !starredOnly;
+              });
+            },
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -218,28 +275,38 @@ class _QuizScreenState extends State<QuizScreen> {
           }).toList();
           if (questionKeys.isEmpty) {
             return const Center(
-              child: Padding(
-                padding: EdgeInsets.only(top: 642),
-                child: Column(
-                  children: [
-                    Text(
-                      'Your quiz is empty. Add a question below!',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Your quiz is empty. Add a question below!',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Icon(Icons.arrow_downward_rounded, size: 40),
-                  ],
-                ),
+                  ),
+                  Icon(Icons.arrow_downward_rounded, size: 40),
+                ],
               ),
             );
           }
+          final List questionKeysStarred = questionKeys.where((key) {
+            return questionBox.get(key)!.isStarred;
+          }).toList();
+          final List questionKeysUnstarred = questionKeys.where((key) {
+            return !questionBox.get(key)!.isStarred;
+          }).toList();
+
+          final List combined = [
+            ...questionKeysStarred,
+            ...questionKeysUnstarred
+          ];
 
           return Column(
             children: [
               QuestionCarousel(
                 questionKeys: questionKeys,
+                starredOnly: starredOnly,
               ),
               Expanded(
                 child: ShaderMask(
@@ -251,46 +318,110 @@ class _QuizScreenState extends State<QuizScreen> {
                         Colors.red, // arbitrary
                         Colors.transparent,
                         Colors.transparent,
-                        Colors.red, // arbitrary
+                        Colors.red // arbitrary
                       ],
                       stops: [0.0, 0.04, 0.88, 1.0],
                     ).createShader(rect);
                   },
                   blendMode: BlendMode.dstOut,
-                  child: ListView.builder(
-                    itemCount: questionKeys.length + 1,
-                    itemBuilder: (context, index) {
-                      // whitespace at the end
-                      if (index == questionKeys.length) {
-                        return const SizedBox(height: 65);
-                      }
+                  child: starredOnly
+                      ? ListView.builder(
+                          itemCount: combined.length + 1,
+                          itemBuilder: (context, index) {
+                            // whitespace at the end
+                            if (index == combined.length) {
+                              return const SizedBox(height: 65);
+                            }
 
-                      final questionId = questionKeys[index];
-                      Question question = questionBox.get(questionId)!;
+                            final questionId = combined[index];
+                            Question question = questionBox.get(questionId)!;
 
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          top: 20.0,
-                          right: alignType == AlignType.left ? 60.0 : 0,
-                          left: alignType == AlignType.right ? 60.0 : 0,
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    top: 20.0,
+                                    right:
+                                        alignType == AlignType.left ? 50.0 : 0,
+                                    left:
+                                        alignType == AlignType.right ? 50.0 : 0,
+                                  ),
+                                  child: Slidable(
+                                    startActionPane: alignType == AlignType.left
+                                        ? getActionPane(
+                                            deleteQuestion,
+                                            showQuestionDialog,
+                                            questionId,
+                                            question)
+                                        : null,
+                                    endActionPane: alignType == AlignType.right
+                                        ? getActionPane(
+                                            deleteQuestion,
+                                            showQuestionDialog,
+                                            questionId,
+                                            question)
+                                        : null,
+                                    child: QuestionTile(
+                                      term: question.term,
+                                      definition: question.definition,
+                                    ),
+                                  ),
+                                ),
+                                index == questionKeysStarred.length - 1 && questionKeysUnstarred.isNotEmpty
+                                    ? Padding(
+                                      padding: const EdgeInsets.only(top: 20.0),
+                                      child: Divider(
+                                          thickness: 2,
+                                          color: Colors.grey[400],
+                                          endIndent: (alignType == AlignType.left) ? 80 : 0,
+                                          indent: (alignType == AlignType.right) ? 80 : 0,
+                                        ),
+                                    )
+                                    : Container(),
+                              ],
+                            );
+                          },
+                        )
+                      : ListView.builder(
+                          itemCount: questionKeys.length + 1,
+                          itemBuilder: (context, index) {
+                            // whitespace at the end
+                            if (index == questionKeys.length) {
+                              return const SizedBox(height: 65);
+                            }
+
+                            final questionId = questionKeys[index];
+                            Question question = questionBox.get(questionId)!;
+
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                top: 20.0,
+                                right: alignType == AlignType.left ? 60.0 : 0,
+                                left: alignType == AlignType.right ? 60.0 : 0,
+                              ),
+                              child: Slidable(
+                                startActionPane: alignType == AlignType.left
+                                    ? getActionPane(
+                                        deleteQuestion,
+                                        showQuestionDialog,
+                                        questionId,
+                                        question)
+                                    : null,
+                                endActionPane: alignType == AlignType.right
+                                    ? getActionPane(
+                                        deleteQuestion,
+                                        showQuestionDialog,
+                                        questionId,
+                                        question)
+                                    : null,
+                                child: QuestionTile(
+                                  term: question.term,
+                                  definition: question.definition,
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        child: Slidable(
-                          startActionPane: alignType == AlignType.left
-                              ? getActionPane(deleteQuestion,
-                                  showQuestionDialog, questionId, question)
-                              : null,
-                          endActionPane: alignType == AlignType.right
-                              ? getActionPane(deleteQuestion,
-                                  showQuestionDialog, questionId, question)
-                              : null,
-                          child: QuestionTile(
-                            term: question.term,
-                            definition: question.definition,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
                 ),
               ),
             ],

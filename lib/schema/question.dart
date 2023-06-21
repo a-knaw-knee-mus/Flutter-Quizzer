@@ -11,6 +11,7 @@ class Question {
     required this.quizId,
     required this.createdAt,
     required this.updatedAt,
+    required this.isStarred,
   });
 
   @HiveField(0)
@@ -27,4 +28,7 @@ class Question {
 
   @HiveField(4)
   DateTime updatedAt;
+
+  @HiveField(5, defaultValue: false)
+  bool isStarred;
 }

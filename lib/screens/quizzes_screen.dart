@@ -183,20 +183,18 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
             
             if (sortedIds.isEmpty) {
               return const Center(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 600),
-                  child: Column(
-                    children: [
-                      Text(
-                        'You have no quizzes. Add a quiz below!',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'You have no quizzes. Add a quiz below!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Icon(Icons.arrow_downward_rounded, size: 40),
-                    ],
-                  ),
+                    ),
+                    Icon(Icons.arrow_downward_rounded, size: 40),
+                  ],
                 ),
               );
             }
@@ -244,8 +242,8 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                   return Padding(
                     padding: EdgeInsets.only(
                       top: 20.0,
-                      right: alignType == AlignType.left ? 60.0 : 0,
-                      left: alignType == AlignType.right ? 60.0 : 0,
+                      right: alignType == AlignType.left ? 40.0 : 0,
+                      left: alignType == AlignType.right ? 40.0 : 0,
                     ),
                     child: Slidable(
                       startActionPane: alignType == AlignType.left

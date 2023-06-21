@@ -22,13 +22,14 @@ class QuestionAdapter extends TypeAdapter<Question> {
       quizId: fields[2] as String,
       createdAt: fields[3] as DateTime,
       updatedAt: fields[4] as DateTime,
+      isStarred: fields[5] == null ? false : fields[5] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Question obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.term)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class QuestionAdapter extends TypeAdapter<Question> {
       ..writeByte(3)
       ..write(obj.createdAt)
       ..writeByte(4)
-      ..write(obj.updatedAt);
+      ..write(obj.updatedAt)
+      ..writeByte(5)
+      ..write(obj.isStarred);
   }
 
   @override
