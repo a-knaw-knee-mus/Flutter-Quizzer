@@ -265,14 +265,17 @@ class _QuizScreenState extends State<QuizScreen> {
       body: ValueListenableBuilder(
         valueListenable: Hive.box<Question>('questionBox').listenable(),
         builder: (context, questions, _) {
-          final List sortedIds = sortType.sortQuestionIds(questions);
+          final List sortedIds =
+              sortType.sortQuestionIds(questions); // all question keys sorted
           final List questionKeys = sortedIds.where((key) {
+            // question keys part of this quiz
             Question question = questionBox.get(key)!;
             if (question.quizId == widget.quizId) {
               return true;
             }
             return false;
           }).toList();
+
           if (questionKeys.isEmpty) {
             return const Center(
               child: Column(
@@ -290,14 +293,16 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
             );
           }
-          final List questionKeysStarred = questionKeys.where((key) {
-            return questionBox.get(key)!.isStarred;
-          }).toList();
-          final List questionKeysUnstarred = questionKeys.where((key) {
-            return !questionBox.get(key)!.isStarred;
-          }).toList();
 
-          final List combined = [
+          final List questionKeysStarred = questionKeys
+              .where((key) => questionBox.get(key)!.isStarred)
+              .toList();
+          final List questionKeysUnstarred = questionKeys
+              .where((key) => !questionKeysStarred.contains(key))
+              .toList();
+
+          // list of keys in quiz but showing starred terms first
+          final List keysStarredUnstarred = [
             ...questionKeysStarred,
             ...questionKeysUnstarred
           ];
@@ -324,104 +329,66 @@ class _QuizScreenState extends State<QuizScreen> {
                     ).createShader(rect);
                   },
                   blendMode: BlendMode.dstOut,
-                  child: starredOnly
-                      ? ListView.builder(
-                          itemCount: combined.length + 1,
-                          itemBuilder: (context, index) {
-                            // whitespace at the end
-                            if (index == combined.length) {
-                              return const SizedBox(height: 65);
-                            }
+                  child: ListView.builder(
+                    itemCount: starredOnly
+                        ? keysStarredUnstarred.length + 1
+                        : questionKeys.length + 1,
+                    itemBuilder: (context, index) {
+                      // whitespace at the end
+                      if (starredOnly && index == keysStarredUnstarred.length) {
+                        return const SizedBox(height: 65);
+                      }
+                      if (!starredOnly && index == questionKeys.length) {
+                        return const SizedBox(height: 65);
+                      }
 
-                            final questionId = combined[index];
-                            Question question = questionBox.get(questionId)!;
+                      final questionId = starredOnly
+                          ? keysStarredUnstarred[index]
+                          : questionKeys[index];
+                      Question question = questionBox.get(questionId)!;
 
-                            return Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    top: 20.0,
-                                    right:
-                                        alignType == AlignType.left ? 50.0 : 0,
-                                    left:
-                                        alignType == AlignType.right ? 50.0 : 0,
-                                  ),
-                                  child: Slidable(
-                                    startActionPane: alignType == AlignType.left
-                                        ? getActionPane(
-                                            deleteQuestion,
-                                            showQuestionDialog,
-                                            questionId,
-                                            question)
-                                        : null,
-                                    endActionPane: alignType == AlignType.right
-                                        ? getActionPane(
-                                            deleteQuestion,
-                                            showQuestionDialog,
-                                            questionId,
-                                            question)
-                                        : null,
-                                    child: QuestionTile(
-                                      term: question.term,
-                                      definition: question.definition,
-                                    ),
-                                  ),
-                                ),
-                                index == questionKeysStarred.length - 1 && questionKeysUnstarred.isNotEmpty
-                                    ? Padding(
-                                      padding: const EdgeInsets.only(top: 20.0),
-                                      child: Divider(
-                                          thickness: 2,
-                                          color: Colors.grey[400],
-                                          endIndent: (alignType == AlignType.left) ? 80 : 0,
-                                          indent: (alignType == AlignType.right) ? 80 : 0,
-                                        ),
-                                    )
-                                    : Container(),
-                              ],
-                            );
-                          },
-                        )
-                      : ListView.builder(
-                          itemCount: questionKeys.length + 1,
-                          itemBuilder: (context, index) {
-                            // whitespace at the end
-                            if (index == questionKeys.length) {
-                              return const SizedBox(height: 65);
-                            }
-
-                            final questionId = questionKeys[index];
-                            Question question = questionBox.get(questionId)!;
-
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                top: 20.0,
-                                right: alignType == AlignType.left ? 60.0 : 0,
-                                left: alignType == AlignType.right ? 60.0 : 0,
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: 20.0,
+                              right: alignType == AlignType.left ? 50.0 : 0,
+                              left: alignType == AlignType.right ? 50.0 : 0,
+                            ),
+                            child: Slidable(
+                              startActionPane: alignType == AlignType.left
+                                  ? getActionPane(deleteQuestion,
+                                      showQuestionDialog, questionId, question)
+                                  : null,
+                              endActionPane: alignType == AlignType.right
+                                  ? getActionPane(deleteQuestion,
+                                      showQuestionDialog, questionId, question)
+                                  : null,
+                              child: QuestionTile(
+                                term: question.term,
+                                definition: question.definition,
                               ),
-                              child: Slidable(
-                                startActionPane: alignType == AlignType.left
-                                    ? getActionPane(
-                                        deleteQuestion,
-                                        showQuestionDialog,
-                                        questionId,
-                                        question)
-                                    : null,
-                                endActionPane: alignType == AlignType.right
-                                    ? getActionPane(
-                                        deleteQuestion,
-                                        showQuestionDialog,
-                                        questionId,
-                                        question)
-                                    : null,
-                                child: QuestionTile(
-                                  term: question.term,
-                                  definition: question.definition,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                            ),
+                          ),
+                          starredOnly &&
+                                  index == questionKeysStarred.length - 1 &&
+                                  questionKeysUnstarred.isNotEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.only(top: 20.0),
+                                  child: Divider(
+                                    thickness: 2,
+                                    color: Colors.grey[400],
+                                    endIndent:
+                                        (alignType == AlignType.left) ? 80 : 0,
+                                    indent:
+                                        (alignType == AlignType.right) ? 80 : 0,
+                                  ),
+                                )
+                              : Container(),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
