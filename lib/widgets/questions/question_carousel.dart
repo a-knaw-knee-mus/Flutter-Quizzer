@@ -3,6 +3,7 @@ import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
+import 'package:flutter_quizzer/widgets/questions/quiz_expand_button.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -33,9 +34,11 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
     final questionBox = Hive.box<Question>('questionBox');
     List questionKeysFiltered = widget.questionKeys;
     if (widget.starredOnly) {
-      questionKeysFiltered = widget.questionKeys.where(
-        (key) => questionBox.get(key)!.isStarred,
-      ).toList();
+      questionKeysFiltered = widget.questionKeys
+          .where(
+            (key) => questionBox.get(key)!.isStarred,
+          )
+          .toList();
     }
     final carouselLength = questionKeysFiltered.length;
     if (carouselLength < 1) return Container();
@@ -94,38 +97,42 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                           rotateSide: RotateSide.bottom,
                           axis: FlipAxis.horizontal,
                           onTapFlipping: true,
-                          frontWidget: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              color: themeColor[200],
-                            ),
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
-                            child: Center(
-                              child: Text(
-                                question.term,
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  color: themeColor[800],
-                                  fontWeight: FontWeight.w600,
+                          frontWidget: QuizExpandButton(
+                            card: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: themeColor[200],
+                              ),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              child: Center(
+                                child: Text(
+                                  question.term,
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    color: themeColor[800],
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                          backWidget: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              color: themeColor[200],
-                            ),
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
-                            child: Center(
-                              child: Text(
-                                question.definition,
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  color: themeColor[800],
-                                  fontWeight: FontWeight.w400,
+                          backWidget: QuizExpandButton(
+                            card: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: themeColor[200],
+                              ),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              child: Center(
+                                child: Text(
+                                  question.definition,
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    color: themeColor[800],
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
                               ),
                             ),

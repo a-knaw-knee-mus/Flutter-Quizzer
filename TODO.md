@@ -16,4 +16,4 @@
 	- Read an import file (of format that was exported above) to initalize the app on a new device
 1. Add a reset button in settings that resets all app data (Hive boxes)
 	- Should ask you to confirm by typing a word in a textbox like 'I agree'
-1. Jump to start/end button for the question carousel
+1. ~~Jump to start/end button for the question carousel~~
