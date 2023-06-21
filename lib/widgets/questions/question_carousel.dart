@@ -34,9 +34,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
     List questionKeysFiltered = widget.questionKeys;
     if (widget.starredOnly) {
       questionKeysFiltered = widget.questionKeys.where(
-        (key) {
-          return questionBox.get(key)!.isStarred;
-        },
+        (key) => questionBox.get(key)!.isStarred,
       ).toList();
     }
     final carouselLength = questionKeysFiltered.length;
@@ -47,12 +45,31 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
           children: [
-            Text(
-              "${widget.starredOnly ? 'Starred ': ''}Term ${currCarouselPage + 1}/$carouselLength",
-              style: TextStyle(
-                fontSize: 15,
-                color: themeColor[800],
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Tooltip(
+                  message: 'Skip to start',
+                  child: IconButton(
+                    onPressed: () => controller.jumpToPage(0),
+                    icon: const Icon(Icons.skip_previous_rounded),
+                  ),
+                ),
+                Text(
+                  "${widget.starredOnly ? 'Starred ' : ''}Term ${currCarouselPage + 1}/$carouselLength",
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: themeColor[800],
+                  ),
+                ),
+                Tooltip(
+                  message: 'Skip to end',
+                  child: IconButton(
+                    onPressed: () => controller.jumpToPage(carouselLength - 1),
+                    icon: const Icon(Icons.skip_next_rounded),
+                  ),
+                ),
+              ],
             ),
             SingleChildScrollView(
               child: Column(
@@ -63,9 +80,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                     child: PageView.builder(
                       controller: controller,
                       onPageChanged: (value) {
-                        setState(() {
-                          currCarouselPage = value;
-                        });
+                        setState(() => currCarouselPage = value);
                       },
                       itemCount: carouselLength,
                       itemBuilder: (_, index) {
