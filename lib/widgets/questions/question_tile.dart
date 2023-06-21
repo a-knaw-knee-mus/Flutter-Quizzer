@@ -22,7 +22,7 @@ class QuestionTile extends StatelessWidget {
     return Card(
       margin: EdgeInsets.zero,
       elevation: 12,
-      color: themeColor[400],
+      color: themeColor[300],
       shape: RoundedRectangleBorder(
         borderRadius: alignType == AlignType.left ? const BorderRadius.only(
           topRight: Radius.circular(15),
