@@ -1,8 +1,8 @@
 1. ~~Save preferences for the desired color theme~~
 1. When the user sets a sort type (for quiz and question seperately) it should be saved in Hive under the preferences box
-1. Set a placeholder for when there are no quizzes/questions
-1. Star certain quizzes to show them at the top of the list
-1. Star certain terms in a quiz and there should be an option in the sort type to only show the favorited terms
+1. ~~Set a placeholder for when there are no quizzes/questions~~
+1. ~~Star certain quizzes to show them at the top of the list~~
+1. ~~Star certain terms in a quiz and there should be an option in the sort type to only show the favorited terms~~
 	- Star button will be a slidable action alongside edit/delete
 	- Will be a secondary option alongside the sort type so can show the starred terms in alphabetical for example
 	- When this sort option is selected can either:
