@@ -64,7 +64,7 @@ class _QuizScreenState extends State<QuizScreen> {
     DateTime ogCreatedAt,
   ) {
     bool isStarred =
-        Hive.box<Question>('questionBox').get(widget.quizId)!.isStarred;
+        Hive.box<Question>('questionBox').get(questionId)!.isStarred;
     setState(() {
       questionBox.put(
         questionId,
