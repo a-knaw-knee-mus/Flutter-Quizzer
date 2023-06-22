@@ -3,7 +3,7 @@ import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
-import 'package:flutter_quizzer/widgets/test/test_settings_dialog.dart';
+import 'package:flutter_quizzer/screens/test_settings_dialog.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +23,7 @@ class TestScreen extends StatefulWidget {
 class _TestScreenState extends State<TestScreen> {
   bool sorting = true;
   bool termStart = true;
-  bool starredOnly = true;
+  bool starredOnly = false;
   final questionBox = Hive.box<Question>('questionBox');
   int currCardIndex = 0;
   List know = []; // store keys of questions you know
@@ -174,8 +174,9 @@ class _TestScreenState extends State<TestScreen> {
                       )
                     : Container(),
                 // tiles
-                Expanded(
-                  child: Center(
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 40.0),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
@@ -188,15 +189,59 @@ class _TestScreenState extends State<TestScreen> {
                         rotateSide: RotateSide.bottom,
                         axis: FlipAxis.horizontal,
                         onTapFlipping: true,
-                        frontWidget: FrontSide(
-                          question: questions[currCardIndex],
-                          termStart: termStart,
-                          themeColor: themeColor,
+                        frontWidget: ProgressButtonOverlays(
+                          sorting: sorting,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                  color: themeColor[700]!, width: 1.5),
+                              color: themeColor[200],
+                            ),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            child: Center(
+                              child: Text(
+                                termStart
+                                    ? questions[currCardIndex].term
+                                    : questions[currCardIndex].definition,
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  color: themeColor[800],
+                                  fontWeight: termStart
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                        backWidget: BackSide(
-                          question: questions[currCardIndex],
-                          termStart: termStart,
-                          themeColor: themeColor,
+                        backWidget: ProgressButtonOverlays(
+                          sorting: sorting,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                  color: themeColor[700]!, width: 1.5),
+                              color: themeColor[200],
+                            ),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            child: Center(
+                              child: Text(
+                                !termStart
+                                    ? questions[currCardIndex].term
+                                    : questions[currCardIndex].definition,
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  color: themeColor[800],
+                                  fontWeight: !termStart
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -209,70 +254,59 @@ class _TestScreenState extends State<TestScreen> {
   }
 }
 
-class FrontSide extends StatelessWidget {
-  final MaterialColor themeColor;
-  final Question question;
-  final bool termStart;
+class ProgressButtonOverlays extends StatelessWidget {
+  final Widget child;
+  final bool sorting;
 
-  const FrontSide({
+  const ProgressButtonOverlays({
     super.key,
-    required this.themeColor,
-    required this.question,
-    required this.termStart,
+    required this.child,
+    required this.sorting,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: themeColor[200],
-      ),
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      child: Center(
-        child: Text(
-          termStart ? question.term : question.definition,
-          style: TextStyle(
-            fontSize: 30,
-            color: themeColor[800],
-            fontWeight: termStart ? FontWeight.w600 : FontWeight.w400,
+    MaterialColor themeColor =
+        context.watch<ColorProvider>().color.getColorSwatch();
+
+    return Stack(
+      children: [
+        child,
+        Container(
+          alignment: Alignment.bottomRight,
+          padding: const EdgeInsets.only(bottom: 6, right: 12),
+          child: IconButton(
+            iconSize: 40,
+            onPressed: () {
+              if (sorting) {
+                print('Check clicked');
+              } else {
+                print('Next Tile pls');
+              }
+            },
+            icon: Icon(
+              Icons.check_rounded,
+              color: themeColor[800],
+            ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class BackSide extends StatelessWidget {
-  final MaterialColor themeColor;
-  final Question question;
-  final bool termStart;
-
-  const BackSide({
-    super.key,
-    required this.themeColor,
-    required this.question,
-    required this.termStart,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: themeColor[200],
-      ),
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      child: Center(
-        child: Text(
-          !termStart ? question.term : question.definition,
-          style: TextStyle(
-            fontSize: 30,
-            color: themeColor[800],
-            fontWeight: !termStart ? FontWeight.w600 : FontWeight.w400,
-          ),
-        ),
-      ),
+        sorting
+            ? Container(
+                alignment: Alignment.bottomLeft,
+                padding: const EdgeInsets.only(bottom: 6, left: 12),
+                child: IconButton(
+                  iconSize: 40,
+                  onPressed: () {
+                    print('X Clicked');
+                  },
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: themeColor[800],
+                  ),
+                ),
+              )
+            : Container(),
+      ],
     );
   }
 }

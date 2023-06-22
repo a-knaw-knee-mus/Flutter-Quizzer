@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/schema/question.dart';
+import 'package:flutter_quizzer/screens/test_screen.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
-import 'package:flutter_quizzer/widgets/test/test_expand_button.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -97,7 +97,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                           rotateSide: RotateSide.bottom,
                           axis: FlipAxis.horizontal,
                           onTapFlipping: true,
-                          frontWidget: QuizExpandButton(
+                          frontWidget: TestExpandButton(
                             questionKeys: widget.questionKeys,
                             card: Container(
                               decoration: BoxDecoration(
@@ -118,7 +118,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                               ),
                             ),
                           ),
-                          backWidget: QuizExpandButton(
+                          backWidget: TestExpandButton(
                             questionKeys: widget.questionKeys,
                             card: Container(
                               decoration: BoxDecoration(
@@ -164,6 +164,44 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class TestExpandButton extends StatelessWidget {
+  final Widget card;
+  final List questionKeys;
+
+  const TestExpandButton({super.key, required this.card, required this.questionKeys});
+
+  @override
+  Widget build(BuildContext context) {
+    MaterialColor themeColor =
+        context.watch<ColorProvider>().color.getColorSwatch();
+
+    return Stack(
+      children: <Widget>[
+        card,
+        Container(
+          alignment: Alignment.bottomRight,
+          padding: const EdgeInsets.only(bottom: 6, right: 12),
+          child: IconButton(
+            iconSize: 30,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return TestScreen(questionKeys: questionKeys);
+                }),
+              );
+            },
+            icon: Icon(
+              Icons.fullscreen_rounded,
+              color: themeColor[800],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
