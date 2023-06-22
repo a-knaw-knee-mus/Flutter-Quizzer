@@ -6,8 +6,9 @@ import 'package:provider/provider.dart';
 
 class QuizExpandButton extends StatelessWidget {
   final Widget card;
+  final List questionKeys;
 
-  const QuizExpandButton({super.key, required this.card});
+  const QuizExpandButton({super.key, required this.card, required this.questionKeys});
 
   @override
   Widget build(BuildContext context) {

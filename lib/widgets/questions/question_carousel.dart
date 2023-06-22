@@ -3,7 +3,7 @@ import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
-import 'package:flutter_quizzer/widgets/questions/quiz_expand_button.dart';
+import 'package:flutter_quizzer/widgets/test/test_expand_button.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -98,6 +98,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                           axis: FlipAxis.horizontal,
                           onTapFlipping: true,
                           frontWidget: QuizExpandButton(
+                            questionKeys: widget.questionKeys,
                             card: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(16),
@@ -118,6 +119,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                             ),
                           ),
                           backWidget: QuizExpandButton(
+                            questionKeys: widget.questionKeys,
                             card: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(16),
