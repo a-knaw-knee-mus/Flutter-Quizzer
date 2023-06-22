@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
+import 'package:flutter_flip_card/flutter_flip_card.dart';
+import 'package:flutter_quizzer/main.dart';
+import 'package:flutter_quizzer/schema/question.dart';
+import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:flutter_quizzer/widgets/test/test_settings_dialog.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 
 class TestScreen extends StatefulWidget {
-  const TestScreen({super.key});
+  final List questionKeys;
+
+  const TestScreen({
+    super.key,
+    required this.questionKeys,
+  });
 
   @override
   State<TestScreen> createState() => _TestScreenState();
@@ -12,23 +23,30 @@ class TestScreen extends StatefulWidget {
 class _TestScreenState extends State<TestScreen> {
   bool sorting = true;
   bool termStart = true;
-  bool starredOnly = false;
+  bool starredOnly = true;
+  final questionBox = Hive.box<Question>('questionBox');
+  int currCardIndex = 0;
+  List know = []; // store keys of questions you know
+  List dontKnow = []; // store keys of questions you don't know
 
   void toggleSorting(bool val) {
     setState(() {
       sorting = val;
+      currCardIndex = 0;
     });
   }
 
   void setTermStart(bool val) {
     setState(() {
       termStart = val;
+      currCardIndex = 0;
     });
   }
 
   void setStarredOnly(bool val) {
     setState(() {
       starredOnly = val;
+      currCardIndex = 0;
     });
   }
 
@@ -36,6 +54,19 @@ class _TestScreenState extends State<TestScreen> {
 
   @override
   Widget build(BuildContext context) {
+    MaterialColor themeColor =
+        context.watch<ColorProvider>().color.getColorSwatch();
+    List filteredKeys = widget.questionKeys.where((key) {
+      Question q = questionBox.get(key)!;
+      if (!starredOnly) return true;
+      if (starredOnly && q.isStarred) return true;
+      return false;
+    }).toList();
+    List questions = filteredKeys.map((key) {
+      return questionBox.get(key);
+    }).toList();
+    FlipCardController flipCon = FlipCardController();
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -45,21 +76,17 @@ class _TestScreenState extends State<TestScreen> {
             Navigator.pop(context);
           },
         ),
-        title: const Column(
+        title: Column(
           children: [
             Text(
-              'Test Screen',
-              style: TextStyle(
+              filteredKeys.isNotEmpty
+                  ? '${currCardIndex + 1}/${questions.length}'
+                  : 'NO QUESTIONS',
+              style: const TextStyle(
                 fontSize: 22,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
-              'Hello',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-              ),
-            )
           ],
         ),
         centerTitle: true,
@@ -86,7 +113,166 @@ class _TestScreenState extends State<TestScreen> {
           )
         ],
       ),
-      body: Container(),
+      body: filteredKeys.isNotEmpty
+          ? Column(
+              children: [
+                // sorting icons
+                sorting
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 40.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 50,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.orange[300]!,
+                                border: Border.all(
+                                    color: Colors.orange[700]!, width: 1.5),
+                                borderRadius: const BorderRadius.only(
+                                  topRight: Radius.circular(19),
+                                  bottomRight: Radius.circular(19),
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${dontKnow.length}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange[900]!,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: 50,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.green[300]!,
+                                border: Border.all(
+                                    color: Colors.green[700]!, width: 1.5),
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(19),
+                                  bottomLeft: Radius.circular(19),
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${know.length}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green[900]!,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(),
+                // tiles
+                Expanded(
+                  child: Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      height: 520,
+                      width: 350,
+                      child: FlipCard(
+                        animationDuration: const Duration(milliseconds: 250),
+                        controller: flipCon,
+                        rotateSide: RotateSide.bottom,
+                        axis: FlipAxis.horizontal,
+                        onTapFlipping: true,
+                        frontWidget: FrontSide(
+                          question: questions[currCardIndex],
+                          termStart: termStart,
+                          themeColor: themeColor,
+                        ),
+                        backWidget: BackSide(
+                          question: questions[currCardIndex],
+                          termStart: termStart,
+                          themeColor: themeColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : Container(),
+    );
+  }
+}
+
+class FrontSide extends StatelessWidget {
+  final MaterialColor themeColor;
+  final Question question;
+  final bool termStart;
+
+  const FrontSide({
+    super.key,
+    required this.themeColor,
+    required this.question,
+    required this.termStart,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: themeColor[200],
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      child: Center(
+        child: Text(
+          termStart ? question.term : question.definition,
+          style: TextStyle(
+            fontSize: 30,
+            color: themeColor[800],
+            fontWeight: termStart ? FontWeight.w600 : FontWeight.w400,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BackSide extends StatelessWidget {
+  final MaterialColor themeColor;
+  final Question question;
+  final bool termStart;
+
+  const BackSide({
+    super.key,
+    required this.themeColor,
+    required this.question,
+    required this.termStart,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: themeColor[200],
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      child: Center(
+        child: Text(
+          !termStart ? question.term : question.definition,
+          style: TextStyle(
+            fontSize: 30,
+            color: themeColor[800],
+            fontWeight: !termStart ? FontWeight.w600 : FontWeight.w400,
+          ),
+        ),
+      ),
     );
   }
 }
