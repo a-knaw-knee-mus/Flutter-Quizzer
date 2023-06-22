@@ -131,8 +131,8 @@ class _TestScreenState extends State<TestScreen> {
           children: [
             Text(
               filteredKeys.isNotEmpty
-                  ? '${currCardIndex != filteredKeys.length ? (currCardIndex+1) : (currCardIndex)}/${questions.length}'
-                  : 'NO QUESTIONS',
+                  ? '${currCardIndex != filteredKeys.length ? (currCardIndex + 1) : (currCardIndex)}/${questions.length}'
+                  : 'NO STARRED QUESTIONS',
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -168,6 +168,16 @@ class _TestScreenState extends State<TestScreen> {
           ? currCardIndex != filteredKeys.length
               ? Column(
                   children: [
+                    TweenAnimationBuilder<double>(
+                      duration: const Duration(milliseconds: 150),
+                      curve: Curves.easeInOut,
+                      tween: Tween<double>(
+                        begin: 0,
+                        end: (currCardIndex) / (filteredKeys.length),
+                      ),
+                      builder: (context, value, _) =>
+                          LinearProgressIndicator(value: value),
+                    ),
                     sorting
                         ? Padding(
                             padding: const EdgeInsets.only(top: 40.0),
