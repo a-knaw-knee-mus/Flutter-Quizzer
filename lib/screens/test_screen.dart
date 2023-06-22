@@ -28,11 +28,17 @@ class _TestScreenState extends State<TestScreen> {
   int currCardIndex = 0;
   List know = []; // store keys of questions you know
   List dontKnow = []; // store keys of questions you don't know
+  //String prevQuestionKey = '';
+  List prevQuestionKeyList = [];
+  bool testDone = false;
 
   void toggleSorting(bool val) {
     setState(() {
       sorting = val;
       currCardIndex = 0;
+      know.clear();
+      dontKnow.clear();
+      prevQuestionKeyList = [];
     });
   }
 
@@ -47,10 +53,55 @@ class _TestScreenState extends State<TestScreen> {
     setState(() {
       starredOnly = val;
       currCardIndex = 0;
+      know.clear();
+      dontKnow.clear();
+      prevQuestionKeyList = [];
     });
   }
 
-  void restartTest() {}
+  void knowQuestion(String key) {
+    setState(() {
+      know.add(key);
+      prevQuestionKeyList.add(key);
+      currCardIndex++;
+    });
+  }
+
+  void dontKnowQuestion(String key) {
+    setState(() {
+      dontKnow.add(key);
+      prevQuestionKeyList.add(key);
+      currCardIndex++;
+    });
+  }
+
+  void nextQuestion(String key) {
+    setState(() {
+      prevQuestionKeyList.add(key);
+      currCardIndex++;
+    });
+  }
+
+  void previousQuestion() {
+    if (know.isNotEmpty && know.last == prevQuestionKeyList.last) {
+      know.removeLast();
+    } else if (dontKnow.isNotEmpty &&
+        dontKnow.last == prevQuestionKeyList.last) {
+      dontKnow.removeLast();
+    }
+    prevQuestionKeyList.removeLast();
+    currCardIndex--;
+    setState(() {});
+  }
+
+  void restartTest() {
+    setState(() {
+      currCardIndex = 0;
+      know.clear();
+      dontKnow.clear();
+      prevQuestionKeyList = [];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +131,7 @@ class _TestScreenState extends State<TestScreen> {
           children: [
             Text(
               filteredKeys.isNotEmpty
-                  ? '${currCardIndex + 1}/${questions.length}'
+                  ? '${currCardIndex != filteredKeys.length ? (currCardIndex+1) : (currCardIndex)}/${questions.length}'
                   : 'NO QUESTIONS',
               style: const TextStyle(
                 fontSize: 22,
@@ -114,130 +165,140 @@ class _TestScreenState extends State<TestScreen> {
         ],
       ),
       body: filteredKeys.isNotEmpty
-          ? Column(
-              children: [
-                // sorting icons
-                sorting
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 40.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 50,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.orange[300]!,
-                                border: Border.all(
-                                    color: Colors.orange[700]!, width: 1.5),
-                                borderRadius: const BorderRadius.only(
-                                  topRight: Radius.circular(19),
-                                  bottomRight: Radius.circular(19),
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${dontKnow.length}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.orange[900]!,
-                                    fontSize: 20,
+          ? currCardIndex != filteredKeys.length
+              ? Column(
+                  children: [
+                    sorting
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 40.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: 50,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange[300]!,
+                                    border: Border.all(
+                                        color: Colors.orange[700]!, width: 1.5),
+                                    borderRadius: const BorderRadius.only(
+                                      topRight: Radius.circular(19),
+                                      bottomRight: Radius.circular(19),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      '${dontKnow.length}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.orange[900]!,
+                                        fontSize: 20,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            Container(
-                              width: 50,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.green[300]!,
-                                border: Border.all(
-                                    color: Colors.green[700]!, width: 1.5),
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(19),
-                                  bottomLeft: Radius.circular(19),
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${know.length}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green[900]!,
-                                    fontSize: 20,
+                                Container(
+                                  width: 50,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors.green[300]!,
+                                    border: Border.all(
+                                        color: Colors.green[700]!, width: 1.5),
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(19),
+                                      bottomLeft: Radius.circular(19),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      '${know.length}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green[900]!,
+                                        fontSize: 20,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )
-                    : Container(),
-                // tiles
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 40.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      height: 520,
-                      width: 350,
-                      child: FlipCard(
-                        animationDuration: const Duration(milliseconds: 250),
-                        controller: flipCon,
-                        rotateSide: RotateSide.bottom,
-                        axis: FlipAxis.horizontal,
-                        onTapFlipping: true,
-                        frontWidget: ProgressButtonOverlays(
-                          sorting: sorting,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                  color: themeColor[700]!, width: 1.5),
-                              color: themeColor[200],
-                            ),
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
-                            child: Center(
-                              child: Text(
-                                termStart
-                                    ? questions[currCardIndex].term
-                                    : questions[currCardIndex].definition,
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  color: themeColor[800],
-                                  fontWeight: termStart
-                                      ? FontWeight.w600
-                                      : FontWeight.w400,
-                                ),
-                              ),
-                            ),
+                          )
+                        : Container(),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 60.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ),
-                        backWidget: ProgressButtonOverlays(
-                          sorting: sorting,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                  color: themeColor[700]!, width: 1.5),
-                              color: themeColor[200],
+                          height: 520,
+                          width: 350,
+                          child: FlipCard(
+                            animationDuration:
+                                const Duration(milliseconds: 250),
+                            controller: flipCon,
+                            rotateSide: RotateSide.bottom,
+                            axis: FlipAxis.horizontal,
+                            onTapFlipping: true,
+                            frontWidget: ProgressButtonOverlays(
+                              questionKey: filteredKeys[currCardIndex],
+                              sorting: sorting,
+                              knowQuestion: knowQuestion,
+                              dontKnowQuestion: dontKnowQuestion,
+                              nextQuestion: nextQuestion,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                      color: themeColor[700]!, width: 1.5),
+                                  color: themeColor[200],
+                                ),
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                child: Center(
+                                  child: Text(
+                                    termStart
+                                        ? questions[currCardIndex].term
+                                        : questions[currCardIndex].definition,
+                                    style: TextStyle(
+                                      fontSize: 30,
+                                      color: themeColor[800],
+                                      fontWeight: termStart
+                                          ? FontWeight.w600
+                                          : FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
-                            child: Center(
-                              child: Text(
-                                !termStart
-                                    ? questions[currCardIndex].term
-                                    : questions[currCardIndex].definition,
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  color: themeColor[800],
-                                  fontWeight: !termStart
-                                      ? FontWeight.w600
-                                      : FontWeight.w400,
+                            backWidget: ProgressButtonOverlays(
+                              questionKey: filteredKeys[currCardIndex],
+                              sorting: sorting,
+                              knowQuestion: knowQuestion,
+                              dontKnowQuestion: dontKnowQuestion,
+                              nextQuestion: nextQuestion,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                      color: themeColor[700]!, width: 1.5),
+                                  color: themeColor[200],
+                                ),
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                child: Center(
+                                  child: Text(
+                                    !termStart
+                                        ? questions[currCardIndex].term
+                                        : questions[currCardIndex].definition,
+                                    style: TextStyle(
+                                      fontSize: 30,
+                                      color: themeColor[800],
+                                      fontWeight: !termStart
+                                          ? FontWeight.w600
+                                          : FontWeight.w400,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -245,10 +306,26 @@ class _TestScreenState extends State<TestScreen> {
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ],
-            )
+                    currCardIndex > 0
+                        ? Align(
+                            alignment: AlignmentDirectional.topStart,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 45.0, top: 20.0),
+                              child: IconButton(
+                                onPressed: () => previousQuestion(),
+                                icon: Icon(
+                                  Icons.arrow_back_ios_rounded,
+                                  color: themeColor[800],
+                                  size: 40,
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                  ],
+                )
+              : Center(child: Text('Test Done!'))
           : Container(),
     );
   }
@@ -257,11 +334,19 @@ class _TestScreenState extends State<TestScreen> {
 class ProgressButtonOverlays extends StatelessWidget {
   final Widget child;
   final bool sorting;
+  final String questionKey;
+  final void Function(String) knowQuestion;
+  final void Function(String) dontKnowQuestion;
+  final void Function(String) nextQuestion;
 
   const ProgressButtonOverlays({
     super.key,
     required this.child,
     required this.sorting,
+    required this.questionKey,
+    required this.knowQuestion,
+    required this.dontKnowQuestion,
+    required this.nextQuestion,
   });
 
   @override
@@ -279,9 +364,9 @@ class ProgressButtonOverlays extends StatelessWidget {
             iconSize: 40,
             onPressed: () {
               if (sorting) {
-                print('Check clicked');
+                knowQuestion(questionKey);
               } else {
-                print('Next Tile pls');
+                nextQuestion(questionKey);
               }
             },
             icon: Icon(
@@ -297,7 +382,7 @@ class ProgressButtonOverlays extends StatelessWidget {
                 child: IconButton(
                   iconSize: 40,
                   onPressed: () {
-                    print('X Clicked');
+                    dontKnowQuestion(questionKey);
                   },
                   icon: Icon(
                     Icons.close_rounded,

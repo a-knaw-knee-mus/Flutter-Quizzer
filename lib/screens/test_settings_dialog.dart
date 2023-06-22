@@ -182,6 +182,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
             ),
             TextButton(
               onPressed: () {
+                widget.restartTest();
                 Navigator.pop(context);
               },
               child: const Text(
