@@ -143,7 +143,7 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Quizzer!',
+          'QuizWiz!',
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,

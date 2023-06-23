@@ -10,7 +10,7 @@
 		2) Show the starred terms first followed by a divider and the non-starred terms
 			- A little harder but could create 2 listviews, each filtering for the starred/nonstarred terms like I did for the questionKeys var
 1. ~~Saved preferences for the desired side of the card (currently left)~~
-1. New page for expanding the carousel to its own focused page (like quizlet)
+1. ~~New page for expanding the carousel to its own focused page (like quizlet)~~
 1. Import/Export
 	- Export the app data as a file to share to other devices
 	- Read an import file (of format that was exported above) to initalize the app on a new device

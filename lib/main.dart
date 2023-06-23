@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/schema/preference.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
-import 'package:flutter_quizzer/screens/profile_screen.dart';
 import 'package:flutter_quizzer/screens/quizzes_screen.dart';
+import 'package:flutter_quizzer/screens/settings_screen.dart';
 import 'package:flutter_quizzer/util/align_types.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -108,7 +108,7 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   List<Widget> pageList = [
     const QuizzesScreen(),
-    const ProfileScreen(),
+    const SettingsScreen(),
   ];
   int _currentPage = 0;
 

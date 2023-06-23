@@ -4,17 +4,18 @@ import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/schema/preference.dart';
 import 'package:flutter_quizzer/util/align_types.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
+import 'package:flutter_quizzer/widgets/reset_app_dialog.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     ColorType themeColor = context.watch<ColorProvider>().color;
@@ -22,7 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile Screen'),
+        title: const Text('Settings'),
       ),
       body: Center(
         child: Column(
@@ -98,6 +99,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ),
+            MaterialButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return const ResetAppDialog();
+                  },
+                );
+              },
+              child: const Text(
+                'RESET APP',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
           ],
         ),
       ),
