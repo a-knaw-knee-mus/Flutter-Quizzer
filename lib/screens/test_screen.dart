@@ -30,6 +30,7 @@ class _TestScreenState extends State<TestScreen> {
   List dontKnow = []; // store keys of questions you don't know
   //String prevQuestionKey = '';
   List prevQuestionKeyList = [];
+  List shuffledIndexList = [];
   bool testDone = false;
 
   void toggleSorting(bool val) {
@@ -45,7 +46,6 @@ class _TestScreenState extends State<TestScreen> {
   void setTermStart(bool val) {
     setState(() {
       termStart = val;
-      currCardIndex = 0;
     });
   }
 
@@ -94,29 +94,66 @@ class _TestScreenState extends State<TestScreen> {
     setState(() {});
   }
 
+  void shuffleTerms() {
+    setState(() {
+      currCardIndex = 0;
+      know.clear();
+      dontKnow.clear();
+      prevQuestionKeyList = [];
+      shuffledIndexList.shuffle();
+    });
+  }
+
   void restartTest() {
     setState(() {
       currCardIndex = 0;
       know.clear();
       dontKnow.clear();
       prevQuestionKeyList = [];
+      shuffledIndexList.clear();
+      for (int i = 0; i < widget.questionKeys.length; i++) {
+        shuffledIndexList.add(i);
+      }
     });
+  }
+
+  @override
+  void initState() {
+    for (int i = 0; i < widget.questionKeys.length; i++) {
+      shuffledIndexList.add(i);
+    }
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     MaterialColor themeColor =
         context.watch<ColorProvider>().color.getColorSwatch();
+    FlipCardController flipCon = FlipCardController();
+
     List filteredKeys = widget.questionKeys.where((key) {
       Question q = questionBox.get(key)!;
       if (!starredOnly) return true;
       if (starredOnly && q.isStarred) return true;
       return false;
     }).toList();
+
+    // shuffle cards
+    List shuffledIndexListFiltered = shuffledIndexList.where(
+      (index) {
+        if (index >= filteredKeys.length) return false;
+        return true;
+      },
+    ).toList();
     List questions = filteredKeys.map((key) {
       return questionBox.get(key);
     }).toList();
-    FlipCardController flipCon = FlipCardController();
+    List numbers = shuffledIndexListFiltered;
+    final Map<int, Question> mappings = {
+      for (int i = 0; i < numbers.length; i++) numbers[i]: questions[i]
+    };
+    numbers.sort();
+    questions = [for (int number in numbers) mappings[number]];
 
     return Scaffold(
       appBar: AppBar(
@@ -155,6 +192,7 @@ class _TestScreenState extends State<TestScreen> {
                     toggleSorting: toggleSorting,
                     setTermStart: setTermStart,
                     setStarredOnly: setStarredOnly,
+                    shuffleTerms: shuffleTerms,
                   );
                 },
                 enableDrag: true,

@@ -21,6 +21,7 @@ class SettingsDialog extends StatefulWidget {
   final void Function(bool) toggleSorting;
   final void Function(bool) setTermStart;
   final void Function(bool) setStarredOnly;
+  final VoidCallback shuffleTerms;
 
   const SettingsDialog({
     super.key,
@@ -31,6 +32,7 @@ class SettingsDialog extends StatefulWidget {
     required this.toggleSorting,
     required this.setTermStart,
     required this.setStarredOnly,
+    required this.shuffleTerms,
   });
 
   @override
@@ -167,6 +169,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
             ),
             GestureDetector(
               onTap: () {
+                widget.shuffleTerms();
                 Navigator.pop(context);
               },
               child: const Row(
