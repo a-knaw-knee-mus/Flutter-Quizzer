@@ -3,13 +3,11 @@ import 'package:flutter_quizzer/schema/preference.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/quizzes_screen.dart';
-import 'package:flutter_quizzer/screens/settings_screen.dart';
 import 'package:flutter_quizzer/util/align_types.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 class ColorProvider extends ChangeNotifier {
   ColorType _color = ColorType.purple;
@@ -106,36 +104,10 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  List<Widget> pageList = [
-    const QuizzesScreen(),
-    const SettingsScreen(),
-  ];
-  int _currentPage = 0;
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: pageList[_currentPage],
-      bottomNavigationBar: SalomonBottomBar(
-        currentIndex: _currentPage,
-        onTap: (i) => setState(() => _currentPage = i),
-        items: [
-          SalomonBottomBarItem(
-            icon: const Icon(Icons.home),
-            title: Text(
-              'Your Quizzes',
-              style: GoogleFonts.jost(),
-            ),
-          ),
-          SalomonBottomBarItem(
-            icon: const Icon(Icons.settings),
-            title: Text(
-              'Settings',
-              style: GoogleFonts.jost(),
-            ),
-          ),
-        ],
-      ),
+    return const Scaffold(
+      body: QuizzesScreen(),
     );
   }
 }

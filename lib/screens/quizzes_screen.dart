@@ -3,6 +3,7 @@ import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/quiz_dialog_screen.dart';
+import 'package:flutter_quizzer/screens/settings_dialog.dart';
 import 'package:flutter_quizzer/util/align_types.dart';
 import 'package:flutter_quizzer/util/form_types.dart';
 import 'package:flutter_quizzer/util/sort_quiz.dart';
@@ -153,13 +154,25 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
             child: QuizSortDropdown(
-                sortType: sortType,
-                onChanged: (QuizSortType newSortType) {
-                  setState(() {
-                    sortType = newSortType;
-                  });
-                }),
+              sortType: sortType,
+              onChanged: (QuizSortType newSortType) {
+                setState(() {
+                  sortType = newSortType;
+                });
+              },
+            ),
           ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return const SettingsDialog();
+                },
+              );
+            },
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -175,12 +188,12 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
           showQuizDialog(FormType.create);
         },
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: ValueListenableBuilder(
           valueListenable: Hive.box<Quiz>('quizBox').listenable(),
           builder: (context, quizzes, _) {
             final List sortedIds = sortType.sortQuizIds(quizzes);
-            
+
             if (sortedIds.isEmpty) {
               return const Center(
                 child: Column(

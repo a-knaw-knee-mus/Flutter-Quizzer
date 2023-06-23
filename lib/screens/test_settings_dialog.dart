@@ -13,7 +13,7 @@ enum StarredType {
   all,
 }
 
-class SettingsDialog extends StatefulWidget {
+class TestSettingsDialog extends StatefulWidget {
   final bool sorting;
   final bool termStart;
   final bool starredOnly;
@@ -23,7 +23,7 @@ class SettingsDialog extends StatefulWidget {
   final void Function(bool) setStarredOnly;
   final VoidCallback shuffleTerms;
 
-  const SettingsDialog({
+  const TestSettingsDialog({
     super.key,
     required this.sorting,
     required this.termStart,
@@ -36,10 +36,10 @@ class SettingsDialog extends StatefulWidget {
   });
 
   @override
-  State<SettingsDialog> createState() => _SettingsDialogState();
+  State<TestSettingsDialog> createState() => _TestSettingsDialogState();
 }
 
-class _SettingsDialogState extends State<SettingsDialog> {
+class _TestSettingsDialogState extends State<TestSettingsDialog> {
   late bool _sorting, _termStart, _starredOnly;
 
   @override

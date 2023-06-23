@@ -8,29 +8,27 @@ import 'package:flutter_quizzer/widgets/reset_app_dialog.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+class SettingsDialog extends StatelessWidget {
+  const SettingsDialog({super.key});
 
-  @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     ColorType themeColor = context.watch<ColorProvider>().color;
     AlignType alignType = context.watch<AlignProvider>().alignType;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
+    return AlertDialog(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(32.0)),
       ),
-      body: Center(
+      backgroundColor: themeColor.getColorSwatch()[200],
+      content: Container(
+        margin: EdgeInsets.zero,
+        height: 150,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Tile display type: '),
                 SegmentedButton<AlignType>(
@@ -50,16 +48,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     context.read<AlignProvider>().alignType =
                         newAlignType.first;
                     Hive.box<Preference>('prefBox').put(
-                        'alignTheme',
-                        Preference(
-                          value: newAlignType.first.getName(),
-                        ));
+                      'alignTheme',
+                      Preference(value: newAlignType.first.getName()),
+                    );
                   },
                 ),
               ],
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Color theme: '),
                 DropdownButtonHideUnderline(
@@ -82,17 +79,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onChanged: (ColorType? newColor) {
                       context.read<ColorProvider>().color = newColor!;
                       Hive.box<Preference>('prefBox').put(
-                          'colorTheme',
-                          Preference(
-                            value: newColor.getName(),
-                          ));
+                        'colorTheme',
+                        Preference(value: newColor.getName()),
+                      );
                     },
                     items: ColorType.values.map((ColorType c) {
                       return DropdownMenuItem(
                         value: c,
-                        child: Text(
-                          c.getName(),
-                        ),
+                        child: Text(c.getName()),
                       );
                     }).toList(),
                   ),
@@ -108,6 +102,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 );
               },
+              color: Colors.red[100],
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
               child: const Text(
                 'RESET APP',
                 style: TextStyle(

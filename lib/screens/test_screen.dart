@@ -185,7 +185,7 @@ class _TestScreenState extends State<TestScreen> {
               showMaterialModalBottomSheet(
                 context: context,
                 builder: (context) {
-                  return SettingsDialog(
+                  return TestSettingsDialog(
                     sorting: sorting,
                     starredOnly: starredOnly,
                     termStart: termStart,
