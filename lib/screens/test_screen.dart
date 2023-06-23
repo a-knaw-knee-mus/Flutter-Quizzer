@@ -203,177 +203,198 @@ class _TestScreenState extends State<TestScreen> {
         ],
       ),
       body: filteredKeys.isNotEmpty
-          ? currCardIndex != filteredKeys.length
-              ? Column(
-                  children: [
-                    TweenAnimationBuilder<double>(
-                      duration: const Duration(milliseconds: 150),
-                      curve: Curves.easeInOut,
-                      tween: Tween<double>(
-                        begin: 0,
-                        end: (currCardIndex) / (filteredKeys.length),
-                      ),
-                      builder: (context, value, _) =>
-                          LinearProgressIndicator(value: value),
-                    ),
-                    sorting
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 40.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  width: 50,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: Colors.orange[300]!,
-                                    border: Border.all(
-                                        color: Colors.orange[700]!, width: 1.5),
-                                    borderRadius: const BorderRadius.only(
-                                      topRight: Radius.circular(19),
-                                      bottomRight: Radius.circular(19),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${dontKnow.length}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.orange[900]!,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width: 50,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: Colors.green[300]!,
-                                    border: Border.all(
-                                        color: Colors.green[700]!, width: 1.5),
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(19),
-                                      bottomLeft: Radius.circular(19),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${know.length}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green[900]!,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+          ? Column(
+              children: [
+                TweenAnimationBuilder<double>(
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeInOut,
+                  tween: Tween<double>(
+                    begin: 0,
+                    end: (currCardIndex) / (filteredKeys.length),
+                  ),
+                  builder: (context, value, _) =>
+                      LinearProgressIndicator(value: value),
+                ),
+                currCardIndex != filteredKeys.length
+                    ? Column(
+                        children: [
+                          TweenAnimationBuilder<double>(
+                            duration: const Duration(milliseconds: 150),
+                            curve: Curves.easeInOut,
+                            tween: Tween<double>(
+                              begin: 0,
+                              end: (currCardIndex) / (filteredKeys.length),
                             ),
-                          )
-                        : Container(),
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 60.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
+                            builder: (context, value, _) =>
+                                LinearProgressIndicator(value: value),
                           ),
-                          height: 520,
-                          width: 350,
-                          child: FlipCard(
-                            animationDuration:
-                                const Duration(milliseconds: 250),
-                            controller: flipCon,
-                            rotateSide: RotateSide.bottom,
-                            axis: FlipAxis.horizontal,
-                            onTapFlipping: true,
-                            frontWidget: ProgressButtonOverlays(
-                              questionKey: filteredKeys[currCardIndex],
-                              sorting: sorting,
-                              knowQuestion: knowQuestion,
-                              dontKnowQuestion: dontKnowQuestion,
-                              nextQuestion: nextQuestion,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                      color: themeColor[700]!, width: 1.5),
-                                  color: themeColor[200],
-                                ),
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                child: Center(
-                                  child: Text(
-                                    termStart
-                                        ? questions[currCardIndex].term
-                                        : questions[currCardIndex].definition,
-                                    style: TextStyle(
-                                      fontSize: 30,
-                                      color: themeColor[800],
-                                      fontWeight: termStart
-                                          ? FontWeight.w600
-                                          : FontWeight.w400,
-                                    ),
+                          sorting
+                              ? Padding(
+                                  padding: const EdgeInsets.only(top: 40.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        width: 50,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.orange[300]!,
+                                          border: Border.all(
+                                              color: Colors.orange[700]!,
+                                              width: 1.5),
+                                          borderRadius: const BorderRadius.only(
+                                            topRight: Radius.circular(19),
+                                            bottomRight: Radius.circular(19),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '${dontKnow.length}',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.orange[900]!,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 50,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.green[300]!,
+                                          border: Border.all(
+                                              color: Colors.green[700]!,
+                                              width: 1.5),
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(19),
+                                            bottomLeft: Radius.circular(19),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '${know.length}',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green[900]!,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ),
-                            ),
-                            backWidget: ProgressButtonOverlays(
-                              questionKey: filteredKeys[currCardIndex],
-                              sorting: sorting,
-                              knowQuestion: knowQuestion,
-                              dontKnowQuestion: dontKnowQuestion,
-                              nextQuestion: nextQuestion,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                      color: themeColor[700]!, width: 1.5),
-                                  color: themeColor[200],
-                                ),
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                child: Center(
-                                  child: Text(
-                                    !termStart
-                                        ? questions[currCardIndex].term
-                                        : questions[currCardIndex].definition,
-                                    style: TextStyle(
-                                      fontSize: 30,
-                                      color: themeColor[800],
-                                      fontWeight: !termStart
-                                          ? FontWeight.w600
-                                          : FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    currCardIndex > 0
-                        ? Align(
-                            alignment: AlignmentDirectional.topStart,
+                                )
+                              : Container(),
+                          Center(
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 45.0, top: 20.0),
-                              child: IconButton(
-                                onPressed: () => previousQuestion(),
-                                icon: Icon(
-                                  Icons.arrow_back_ios_rounded,
-                                  color: themeColor[800],
-                                  size: 40,
+                              padding: const EdgeInsets.only(top: 60.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                height: 520,
+                                width: 350,
+                                child: FlipCard(
+                                  animationDuration:
+                                      const Duration(milliseconds: 250),
+                                  controller: flipCon,
+                                  rotateSide: RotateSide.bottom,
+                                  axis: FlipAxis.horizontal,
+                                  onTapFlipping: true,
+                                  frontWidget: ProgressButtonOverlays(
+                                    questionKey: filteredKeys[currCardIndex],
+                                    sorting: sorting,
+                                    knowQuestion: knowQuestion,
+                                    dontKnowQuestion: dontKnowQuestion,
+                                    nextQuestion: nextQuestion,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                            color: themeColor[700]!,
+                                            width: 1.5),
+                                        color: themeColor[200],
+                                      ),
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 4),
+                                      child: Center(
+                                        child: Text(
+                                          termStart
+                                              ? questions[currCardIndex].term
+                                              : questions[currCardIndex]
+                                                  .definition,
+                                          style: TextStyle(
+                                            fontSize: 30,
+                                            color: themeColor[800],
+                                            fontWeight: termStart
+                                                ? FontWeight.w600
+                                                : FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  backWidget: ProgressButtonOverlays(
+                                    questionKey: filteredKeys[currCardIndex],
+                                    sorting: sorting,
+                                    knowQuestion: knowQuestion,
+                                    dontKnowQuestion: dontKnowQuestion,
+                                    nextQuestion: nextQuestion,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                            color: themeColor[700]!,
+                                            width: 1.5),
+                                        color: themeColor[200],
+                                      ),
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 4),
+                                      child: Center(
+                                        child: Text(
+                                          !termStart
+                                              ? questions[currCardIndex].term
+                                              : questions[currCardIndex]
+                                                  .definition,
+                                          style: TextStyle(
+                                            fontSize: 30,
+                                            color: themeColor[800],
+                                            fontWeight: !termStart
+                                                ? FontWeight.w600
+                                                : FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          )
-                        : Container(),
-                  ],
-                )
-              : Center(child: Text('Test Done!'))
+                          ),
+                          currCardIndex > 0
+                              ? Align(
+                                  alignment: AlignmentDirectional.topStart,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 45.0, top: 20.0),
+                                    child: IconButton(
+                                      onPressed: () => previousQuestion(),
+                                      icon: Icon(
+                                        Icons.arrow_back_ios_rounded,
+                                        color: themeColor[800],
+                                        size: 40,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                        ],
+                      )
+                    : Center(child: Text('Test Done!'))
+              ],
+            )
           : Container(),
     );
   }
