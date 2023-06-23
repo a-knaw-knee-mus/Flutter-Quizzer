@@ -56,8 +56,8 @@ class _TestSettingsDialogState extends State<TestSettingsDialog> {
         context.watch<ColorProvider>().color.getColorSwatch();
 
     return Container(
-      color: themeColor[400],
-      height: 450,
+      color: themeColor[200],
+      height: 400,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
         child: Column(
@@ -189,7 +189,7 @@ class _TestSettingsDialogState extends State<TestSettingsDialog> {
                 Navigator.pop(context);
               },
               child: const Text(
-                'Restart Flashcards',
+                'Reset Flashcards',
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,

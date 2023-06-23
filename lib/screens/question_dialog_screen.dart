@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quizzer/main.dart';
+import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:flutter_quizzer/util/form_types.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class QuestionDialog extends StatefulWidget {
   final BuildContext context;
@@ -127,7 +130,14 @@ class _QuestionDialogState extends State<QuestionDialog> {
 
   @override
   Widget build(BuildContext context) {
+    MaterialColor themeColor =
+        context.watch<ColorProvider>().color.getColorSwatch();
+
     return AlertDialog(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(32.0)),
+      ),
+      backgroundColor: themeColor[200],
       content: Form(
         key: _formKey,
         child: SizedBox(

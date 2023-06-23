@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/screens/test_screen.dart';
+import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 class TestSummary extends StatelessWidget {
   final List knownQuestions;
@@ -37,193 +40,201 @@ class TestSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 40,
-        horizontal: 20,
-      ),
-      child: SizedBox(
-        height: 400,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              getCompletionText(totalQuestions.length),
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: SizedBox(
-                height: 100,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircularPercentIndicator(
-                      radius: 45.0,
-                      lineWidth: 10.0,
-                      progressColor: Colors.green[700],
-                      backgroundColor: Colors.orange,
-                      circularStrokeCap: CircularStrokeCap.round,
-                      percent: knownQuestions.length / totalQuestions.length,
-                      center: Text(
-                        '${'${knownQuestions.length / totalQuestions.length * 100}'.split('.').first}%',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
+    MaterialColor themeColor =
+        context.watch<ColorProvider>().color.getColorSwatch();
+
+    return Expanded(
+      child: Container(
+        color: themeColor[100],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 40,
+            horizontal: 20,
+          ),
+          child: SizedBox(
+            height: 400,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  getCompletionText(totalQuestions.length),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: SizedBox(
+                    height: 100,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CircularPercentIndicator(
+                          radius: 45.0,
+                          lineWidth: 10.0,
+                          progressColor: Colors.green[700],
+                          backgroundColor: Colors.orange,
+                          circularStrokeCap: CircularStrokeCap.round,
+                          percent: knownQuestions.length / totalQuestions.length,
+                          center: Text(
+                            '${'${knownQuestions.length / totalQuestions.length * 100}'.split('.').first}%',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          children: [
-                            sorting
-                                ? Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Row(
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(
+                              children: [
+                                sorting
+                                    ? Expanded(
+                                        child: Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                              MainAxisAlignment.spaceAround,
                                           children: [
-                                            Text(
-                                              'Know',
-                                              style: TextStyle(
-                                                color: Colors.green[800],
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            Container(
-                                              width: 30,
-                                              height: 30,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: Colors.green[800]!,
-                                                  width: 1.5,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  '${knownQuestions.length}',
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Know',
                                                   style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.green[800]!,
+                                                    color: Colors.green[800],
                                                     fontSize: 20,
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Still learning',
-                                              style: TextStyle(
-                                                color: Colors.orange[800],
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            Container(
-                                              width: 30,
-                                              height: 30,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: Colors.orange[800]!,
-                                                  width: 1.5,
+                                                Container(
+                                                  width: 30,
+                                                  height: 30,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: Colors.green[800]!,
+                                                      width: 1.5,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(20),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      '${knownQuestions.length}',
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.green[800]!,
+                                                        fontSize: 20,
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  '${dontKnowQuestions.length}',
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Still learning',
                                                   style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.orange[800]!,
+                                                    color: Colors.orange[800],
                                                     fontSize: 20,
                                                   ),
                                                 ),
-                                              ),
+                                                Container(
+                                                  width: 30,
+                                                  height: 30,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: Colors.orange[800]!,
+                                                      width: 1.5,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(20),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      '${dontKnowQuestions.length}',
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.orange[800]!,
+                                                        fontSize: 20,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                                  )
-                                : Expanded(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Completed Questions',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 30,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Colors.black,
-                                              width: 1.5,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              '${totalQuestions.length}',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
+                                      )
+                                    : Expanded(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              'Completed Questions',
+                                              style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: 15,
+                                                fontSize: 18,
                                               ),
                                             ),
-                                          ),
+                                            Container(
+                                              width: 30,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: Colors.black,
+                                                  width: 1.5,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  '${totalQuestions.length}',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
+                                      ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                MaterialButton(
+                  child: const Text(
+                    'REDO FAILED QUESTIONS',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                        return TestScreen(questionKeys: dontKnowQuestions);
+                      }),
+                    );
+                  },
+                )
+              ],
             ),
-            MaterialButton(
-              child: const Text(
-                'REDO FAILED QUESTIONS',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (BuildContext context) {
-                    return TestScreen(questionKeys: dontKnowQuestions);
-                  }),
-                );
-              },
-            )
-          ],
+          ),
         ),
       ),
     );

@@ -5,6 +5,7 @@ import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/quiz_dialog_screen.dart';
 import 'package:flutter_quizzer/screens/settings_dialog.dart';
 import 'package:flutter_quizzer/util/align_types.dart';
+import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:flutter_quizzer/util/form_types.dart';
 import 'package:flutter_quizzer/util/sort_quiz.dart';
 import 'package:flutter_quizzer/widgets/quizzes/quiz_sort_dropdown.dart';
@@ -140,6 +141,8 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
   @override
   Widget build(BuildContext context) {
     AlignType alignType = context.watch<AlignProvider>().alignType;
+    MaterialColor themeColor =
+        context.watch<ColorProvider>().color.getColorSwatch();
 
     return Scaffold(
       appBar: AppBar(
@@ -189,96 +192,99 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: ValueListenableBuilder(
-          valueListenable: Hive.box<Quiz>('quizBox').listenable(),
-          builder: (context, quizzes, _) {
-            final List sortedIds = sortType.sortQuizIds(quizzes);
-
-            if (sortedIds.isEmpty) {
-              return const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'You have no quizzes. Add a quiz below!',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+      body: Container(
+        color: themeColor[100],
+        child: ValueListenableBuilder(
+            valueListenable: Hive.box<Quiz>('quizBox').listenable(),
+            builder: (context, quizzes, _) {
+              final List sortedIds = sortType.sortQuizIds(quizzes);
+      
+              if (sortedIds.isEmpty) {
+                return const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'You have no quizzes. Add a quiz below!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    Icon(Icons.arrow_downward_rounded, size: 40),
-                  ],
+                      Icon(Icons.arrow_downward_rounded, size: 40),
+                    ],
+                  ),
+                );
+              }
+      
+              return ShaderMask(
+                shaderCallback: (Rect rect) {
+                  return const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.red, // arbitrary
+                        Colors.transparent,
+                        Colors.transparent,
+                        Colors.red, // arbitrary
+                      ],
+                      stops: [
+                        0.0,
+                        0.03,
+                        0.91,
+                        1.0
+                      ]).createShader(rect);
+                },
+                blendMode: BlendMode.dstOut,
+                child: ListView.builder(
+                  itemCount: sortedIds.length + 1,
+                  itemBuilder: (context, index) {
+                    // whitespace at the end
+                    if (index == sortedIds.length) {
+                      return const SizedBox(height: 65);
+                    }
+      
+                    final quizId = sortedIds[index];
+                    final quiz = quizzes.get(quizId)!;
+                    final questionBox = Hive.box<Question>('questionBox');
+                    int quizSize = questionBox.values.where((question) {
+                      return question.quizId == quizId;
+                    }).length;
+      
+                    void modifyCount(int change) {
+                      setState(() {
+                        quizSize += change;
+                      });
+                    }
+      
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        top: 20.0,
+                        right: alignType == AlignType.left ? 40.0 : 0,
+                        left: alignType == AlignType.right ? 40.0 : 0,
+                      ),
+                      child: Slidable(
+                        startActionPane: alignType == AlignType.left
+                            ? getActionPane(
+                                deleteQuiz, showQuizDialog, quizId, quiz)
+                            : null,
+                        endActionPane: alignType == AlignType.right
+                            ? getActionPane(
+                                deleteQuiz, showQuizDialog, quizId, quiz)
+                            : null,
+                        child: QuizTile(
+                          quiz: quiz,
+                          quizId: quizId,
+                          modifyCount: modifyCount,
+                          quizSize: quizSize,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               );
-            }
-
-            return ShaderMask(
-              shaderCallback: (Rect rect) {
-                return const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.red, // arbitrary
-                      Colors.transparent,
-                      Colors.transparent,
-                      Colors.red, // arbitrary
-                    ],
-                    stops: [
-                      0.0,
-                      0.03,
-                      0.91,
-                      1.0
-                    ]).createShader(rect);
-              },
-              blendMode: BlendMode.dstOut,
-              child: ListView.builder(
-                itemCount: sortedIds.length + 1,
-                itemBuilder: (context, index) {
-                  // whitespace at the end
-                  if (index == sortedIds.length) {
-                    return const SizedBox(height: 65);
-                  }
-
-                  final quizId = sortedIds[index];
-                  final quiz = quizzes.get(quizId)!;
-                  final questionBox = Hive.box<Question>('questionBox');
-                  int quizSize = questionBox.values.where((question) {
-                    return question.quizId == quizId;
-                  }).length;
-
-                  void modifyCount(int change) {
-                    setState(() {
-                      quizSize += change;
-                    });
-                  }
-
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      top: 20.0,
-                      right: alignType == AlignType.left ? 40.0 : 0,
-                      left: alignType == AlignType.right ? 40.0 : 0,
-                    ),
-                    child: Slidable(
-                      startActionPane: alignType == AlignType.left
-                          ? getActionPane(
-                              deleteQuiz, showQuizDialog, quizId, quiz)
-                          : null,
-                      endActionPane: alignType == AlignType.right
-                          ? getActionPane(
-                              deleteQuiz, showQuizDialog, quizId, quiz)
-                          : null,
-                      child: QuizTile(
-                        quiz: quiz,
-                        quizId: quizId,
-                        modifyCount: modifyCount,
-                        quizSize: quizSize,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            );
-          }),
+            }),
+      ),
     );
   }
 }
