@@ -91,49 +91,68 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                         Question question =
                             questionBox.get(questionKeysFiltered[index])!;
                         FlipCardController flipCon = FlipCardController();
-                        return FlipCard(
-                          animationDuration: const Duration(milliseconds: 250),
-                          controller: flipCon,
-                          rotateSide: RotateSide.bottom,
-                          axis: FlipAxis.horizontal,
-                          onTapFlipping: true,
-                          frontWidget: TestExpandButton(
-                            questionKeys: widget.questionKeys,
-                            card: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                color: themeColor[200],
-                              ),
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
-                              child: Center(
-                                child: Text(
-                                  question.term,
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    color: themeColor[800],
-                                    fontWeight: FontWeight.w600,
+                        return AnimatedScale(
+                          duration: const Duration(milliseconds: 150),
+                          scale: currCarouselPage == index ? 1 : 0.90,
+                          child: FlipCard(
+                            animationDuration:
+                                const Duration(milliseconds: 250),
+                            controller: flipCon,
+                            rotateSide: RotateSide.bottom,
+                            axis: FlipAxis.horizontal,
+                            onTapFlipping: true,
+                            frontWidget: TestExpandButton(
+                              questionKeys: widget.questionKeys,
+                              card: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  color: themeColor[200],
+                                ),
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                child: Center(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.vertical,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(15.0),
+                                      child: Text(
+                                        question.term,
+                                        style: TextStyle(
+                                          fontSize: 30,
+                                          color: themeColor[800],
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          backWidget: TestExpandButton(
-                            questionKeys: widget.questionKeys,
-                            card: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                color: themeColor[200],
-                              ),
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
-                              child: Center(
-                                child: Text(
-                                  question.definition,
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    color: themeColor[800],
-                                    fontWeight: FontWeight.w400,
+                            backWidget: TestExpandButton(
+                              questionKeys: widget.questionKeys,
+                              card: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  color: themeColor[200],
+                                ),
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                child: Center(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.vertical,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(15.0),
+                                      child: Text(
+                                        question.definition,
+                                        style: TextStyle(
+                                          fontSize: 30,
+                                          color: themeColor[800],
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -172,7 +191,8 @@ class TestExpandButton extends StatelessWidget {
   final Widget card;
   final List questionKeys;
 
-  const TestExpandButton({super.key, required this.card, required this.questionKeys});
+  const TestExpandButton(
+      {super.key, required this.card, required this.questionKeys});
 
   @override
   Widget build(BuildContext context) {

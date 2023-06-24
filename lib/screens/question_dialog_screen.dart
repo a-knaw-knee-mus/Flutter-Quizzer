@@ -113,6 +113,7 @@ class _QuestionDialogState extends State<QuestionDialog> {
     _questionTermController.clear();
     _questionDefinitionController.clear();
     Navigator.of(widget.context).pop();
+    
     ScaffoldMessenger.of(widget.context).showSnackBar(
       SnackBar(
         content: Text(

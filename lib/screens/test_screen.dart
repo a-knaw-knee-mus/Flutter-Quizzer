@@ -217,16 +217,6 @@ class _TestScreenState extends State<TestScreen> {
                   currCardIndex != filteredKeys.length
                       ? Column(
                           children: [
-                            TweenAnimationBuilder<double>(
-                              duration: const Duration(milliseconds: 150),
-                              curve: Curves.easeInOut,
-                              tween: Tween<double>(
-                                begin: 0,
-                                end: (currCardIndex) / (filteredKeys.length),
-                              ),
-                              builder: (context, value, _) =>
-                                  LinearProgressIndicator(value: value),
-                            ),
                             sorting
                                 ? Padding(
                                     padding: const EdgeInsets.only(top: 40.0),
@@ -242,7 +232,8 @@ class _TestScreenState extends State<TestScreen> {
                                             border: Border.all(
                                                 color: Colors.orange[700]!,
                                                 width: 1.5),
-                                            borderRadius: const BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               topRight: Radius.circular(19),
                                               bottomRight: Radius.circular(19),
                                             ),
@@ -266,7 +257,8 @@ class _TestScreenState extends State<TestScreen> {
                                             border: Border.all(
                                                 color: Colors.green[700]!,
                                                 width: 1.5),
-                                            borderRadius: const BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               topLeft: Radius.circular(19),
                                               bottomLeft: Radius.circular(19),
                                             ),
@@ -310,7 +302,8 @@ class _TestScreenState extends State<TestScreen> {
                                       nextQuestion: nextQuestion,
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius:
+                                              BorderRadius.circular(16),
                                           border: Border.all(
                                               color: themeColor[700]!,
                                               width: 1.5),
@@ -319,17 +312,25 @@ class _TestScreenState extends State<TestScreen> {
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 10, vertical: 4),
                                         child: Center(
-                                          child: Text(
-                                            termStart
-                                                ? questions[currCardIndex].term
-                                                : questions[currCardIndex]
-                                                    .definition,
-                                            style: TextStyle(
-                                              fontSize: 30,
-                                              color: themeColor[800],
-                                              fontWeight: termStart
-                                                  ? FontWeight.w600
-                                                  : FontWeight.w400,
+                                          child: SingleChildScrollView(
+                                            scrollDirection: Axis.vertical,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
+                                              child: Text(
+                                                termStart
+                                                    ? questions[currCardIndex]
+                                                        .term
+                                                    : questions[currCardIndex]
+                                                        .definition,
+                                                style: TextStyle(
+                                                  fontSize: 30,
+                                                  color: themeColor[800],
+                                                  fontWeight: termStart
+                                                      ? FontWeight.w600
+                                                      : FontWeight.w400,
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -343,26 +344,36 @@ class _TestScreenState extends State<TestScreen> {
                                       nextQuestion: nextQuestion,
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius:
+                                              BorderRadius.circular(16),
                                           border: Border.all(
-                                              color: themeColor[700]!,
-                                              width: 1.5),
+                                            color: themeColor[700]!,
+                                            width: 1.5,
+                                          ),
                                           color: themeColor[200],
                                         ),
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 10, vertical: 4),
                                         child: Center(
-                                          child: Text(
-                                            !termStart
-                                                ? questions[currCardIndex].term
-                                                : questions[currCardIndex]
-                                                    .definition,
-                                            style: TextStyle(
-                                              fontSize: 30,
-                                              color: themeColor[800],
-                                              fontWeight: !termStart
-                                                  ? FontWeight.w600
-                                                  : FontWeight.w400,
+                                          child: SingleChildScrollView(
+                                            scrollDirection: Axis.vertical,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
+                                              child: Text(
+                                                !termStart
+                                                    ? questions[currCardIndex]
+                                                        .term
+                                                    : questions[currCardIndex]
+                                                        .definition,
+                                                style: TextStyle(
+                                                  fontSize: 30,
+                                                  color: themeColor[800],
+                                                  fontWeight: !termStart
+                                                      ? FontWeight.w600
+                                                      : FontWeight.w400,
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),

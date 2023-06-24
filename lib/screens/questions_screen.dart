@@ -308,12 +308,12 @@ class _QuizScreenState extends State<QuizScreen> {
                         if (!starredOnly && index == questionKeys.length) {
                           return const SizedBox(height: 65);
                         }
-      
+                      
                         final questionId = starredOnly
                             ? keysStarredUnstarred[index]
                             : questionKeys[index];
                         Question question = questionBox.get(questionId)!;
-      
+                      
                         return Column(
                           children: [
                             Padding(
@@ -344,7 +344,7 @@ class _QuizScreenState extends State<QuizScreen> {
                                     padding: const EdgeInsets.only(top: 20.0),
                                     child: Divider(
                                       thickness: 2,
-                                      color: Colors.grey[400],
+                                      color: themeColor[400],
                                       endIndent:
                                           (alignType == AlignType.left) ? 80 : 0,
                                       indent:

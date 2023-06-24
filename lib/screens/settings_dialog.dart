@@ -62,15 +62,16 @@ class SettingsDialog extends StatelessWidget {
                 DropdownButtonHideUnderline(
                   child: DropdownButton2(
                     hint: Text(themeColor.getName()),
-                    iconStyleData: const IconStyleData(
-                      icon: Icon(Icons.list),
-                    ),
+                    iconStyleData: const IconStyleData(icon: Icon(Icons.list)),
                     dropdownStyleData: DropdownStyleData(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
+                        color: themeColor.getColorSwatch()[200],
                       ),
                       maxHeight: 207,
                       scrollbarTheme: ScrollbarThemeData(
+                        thumbColor: MaterialStateProperty.all(
+                            themeColor.getColorSwatch()[300]),
                         radius: const Radius.circular(40),
                         thickness: MaterialStateProperty.all(6),
                         thumbVisibility: MaterialStateProperty.all(true),
