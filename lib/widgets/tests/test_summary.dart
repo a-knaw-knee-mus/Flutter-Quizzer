@@ -31,7 +31,7 @@ class TestSummary extends StatelessWidget {
       } else if (correctRatio >= 0.5) {
         return "Good effort! You're on the right track. Focus on the flashcards you struggled with and give them some extra attention.";
       } else {
-        return "Keep practicing! You have room for improvement. Try reviewing the flashcards again to enhance your knowledge";
+        return "Keep practicing! You have room for improvement. Try reviewing the flashcards again to enhance your knowledge.";
       }
     } else {
       return "Congratulations on completing the test! Take a moment to reflect on your performance and areas for further improvement.";
@@ -105,6 +105,7 @@ class TestSummary extends StatelessWidget {
                                                   style: TextStyle(
                                                     color: Colors.green[800],
                                                     fontSize: 20,
+                                                    fontWeight: FontWeight.bold
                                                   ),
                                                 ),
                                                 Container(
@@ -140,6 +141,7 @@ class TestSummary extends StatelessWidget {
                                                   style: TextStyle(
                                                     color: Colors.orange[800],
                                                     fontSize: 20,
+                                                    fontWeight: FontWeight.bold
                                                   ),
                                                 ),
                                                 Container(
@@ -214,7 +216,7 @@ class TestSummary extends StatelessWidget {
                     ),
                   ),
                 ),
-                MaterialButton(
+                dontKnowQuestions.isNotEmpty ? MaterialButton(
                   child: const Text(
                     'REDO FAILED QUESTIONS',
                     style: TextStyle(
@@ -231,7 +233,7 @@ class TestSummary extends StatelessWidget {
                       }),
                     );
                   },
-                )
+                ) : Container(),
               ],
             ),
           ),

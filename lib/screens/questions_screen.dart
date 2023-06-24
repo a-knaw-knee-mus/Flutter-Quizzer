@@ -81,36 +81,6 @@ class _QuizScreenState extends State<QuizScreen> {
     });
   }
 
-  void toggleStarred(Question question, String questionId) {
-    setState(() {
-      questionBox.put(
-        questionId,
-        Question(
-          term: question.term,
-          definition: question.definition,
-          quizId: widget.quizId,
-          createdAt: question.createdAt,
-          updatedAt: question.updatedAt,
-          isStarred: !question.isStarred,
-        ),
-      );
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${question.term} has been ${question.isStarred ? 'unstarred' : 'starred'}',
-          style: GoogleFonts.jost(color: Colors.black),
-        ),
-        duration: const Duration(
-          milliseconds: 1500,
-        ),
-        showCloseIcon: true,
-        backgroundColor: Colors.yellow,
-      ),
-    );
-  }
-
   void deleteQuestion(String questionId) {
     setState(() {
       questionBox.delete(questionId);
@@ -162,6 +132,7 @@ class _QuizScreenState extends State<QuizScreen> {
     Question question,
   ) {
     return ActionPane(
+      extentRatio: 0.3,
       motion: const DrawerMotion(),
       children: [
         SlidableAction(
@@ -182,15 +153,6 @@ class _QuizScreenState extends State<QuizScreen> {
           icon: Icons.edit,
           backgroundColor: Colors.green,
         ),
-        SlidableAction(
-          onPressed: (context) {
-            toggleStarred(question, questionId);
-          },
-          icon: question.isStarred
-              ? Icons.star_rate_rounded
-              : Icons.star_border_rounded,
-          backgroundColor: Colors.yellow,
-        )
       ],
     );
   }
@@ -370,8 +332,8 @@ class _QuizScreenState extends State<QuizScreen> {
                                         showQuestionDialog, questionId, question)
                                     : null,
                                 child: QuestionTile(
-                                  term: question.term,
-                                  definition: question.definition,
+                                  question: question,
+                                  questionId: questionId,
                                 ),
                               ),
                             ),

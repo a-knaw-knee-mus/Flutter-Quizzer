@@ -85,7 +85,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Navigation with Arguments',
+      title: 'QuizWiz',
       home: const MyPage(),
       theme: ThemeData(
         primarySwatch: context.watch<ColorProvider>().color.getColorSwatch(),

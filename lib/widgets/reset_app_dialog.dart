@@ -29,12 +29,14 @@ class ResetAppDialog extends StatelessWidget {
               prefBox.clear();
               context.read<ColorProvider>().color = ColorType.purple;
               context.read<AlignProvider>().alignType = AlignType.left;
-              Navigator.pop(context);
+              Navigator.pop(context); // reset confirmation
+              Navigator.pop(context); // settings dialog
             },
             child: const Text('Agree')),
         TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel')),
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
       ],
     );
   }
