@@ -6,7 +6,9 @@ import 'package:flutter_quizzer/util/align_types.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:flutter_quizzer/widgets/reset_app_dialog.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsDialog extends StatelessWidget {
   const SettingsDialog({super.key});
@@ -23,7 +25,7 @@ class SettingsDialog extends StatelessWidget {
       backgroundColor: themeColor.getColorSwatch()[200],
       content: Container(
         margin: EdgeInsets.zero,
-        height: 150,
+        height: 192,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -114,7 +116,16 @@ class SettingsDialog extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            )
+            ),
+            IconButton(
+              onPressed: () async {
+                final Uri url =
+                    Uri.parse('https://github.com/a-knaw-knee-mus/QuizWiz');
+                await launchUrl(url);
+                
+              },
+              icon: const Icon(LineIcons.github),
+            ),
           ],
         ),
       ),
