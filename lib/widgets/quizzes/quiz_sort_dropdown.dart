@@ -23,9 +23,9 @@ class QuizSortDropdown extends StatelessWidget {
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         hint: sortType.getDisplayWidget(Colors.white),
-        iconStyleData: const IconStyleData(
+        iconStyleData: IconStyleData(
           iconEnabledColor: Colors.white,
-          icon: Icon(Icons.sort),
+          icon: Container(),
         ),
         dropdownStyleData: DropdownStyleData(
           decoration: BoxDecoration(

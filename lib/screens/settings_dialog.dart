@@ -19,6 +19,7 @@ class SettingsDialog extends StatelessWidget {
     AlignType alignType = context.watch<AlignProvider>().alignType;
 
     return AlertDialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 24),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(32.0)),
       ),
@@ -27,7 +28,7 @@ class SettingsDialog extends StatelessWidget {
         margin: EdgeInsets.zero,
         height: 192,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -36,13 +37,12 @@ class SettingsDialog extends StatelessWidget {
                 SegmentedButton<AlignType>(
                   segments: const <ButtonSegment<AlignType>>[
                     ButtonSegment<AlignType>(
-                        value: AlignType.left,
-                        label: Text('Left'),
-                        icon: Icon(Icons.arrow_back_ios_rounded)),
+                      value: AlignType.left,
+                      label: Text('Left'),
+                    ),
                     ButtonSegment<AlignType>(
                       value: AlignType.right,
                       label: Text('Right'),
-                      icon: Icon(Icons.arrow_forward_ios_rounded),
                     ),
                   ],
                   selected: <AlignType>{alignType},
@@ -118,11 +118,12 @@ class SettingsDialog extends StatelessWidget {
               ),
             ),
             IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
               onPressed: () async {
                 final Uri url =
                     Uri.parse('https://github.com/a-knaw-knee-mus/QuizWiz');
                 await launchUrl(url);
-                
               },
               icon: const Icon(LineIcons.github),
             ),

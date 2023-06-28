@@ -83,7 +83,7 @@ class _TestSettingsDialogState extends State<TestSettingsDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Track successful/unsuccessful terms:',
+                  'Track terms:',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,

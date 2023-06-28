@@ -35,35 +35,35 @@ extension QuizSortExtension on QuizSortType {
         return Row(
           children: [
             const Icon(Icons.arrow_upward_rounded),
-            Text(' Created Date', style: TextStyle(color: textColor)),
+            Text(' Created', style: TextStyle(color: textColor)),
           ],
         );
       case QuizSortType.createdDateDesc:
         return Row(
           children: [
             const Icon(Icons.arrow_downward_rounded),
-            Text(' Created Date', style: TextStyle(color: textColor)),
+            Text(' Created', style: TextStyle(color: textColor)),
           ],
         );
       case QuizSortType.updatedDateAsc:
         return Row(
           children: [
             const Icon(Icons.arrow_upward_rounded),
-            Text(' Updated Date', style: TextStyle(color: textColor)),
+            Text(' Updated', style: TextStyle(color: textColor)),
           ],
         );
       case QuizSortType.updatedDateDesc:
         return Row(
           children: [
             const Icon(Icons.arrow_downward_rounded),
-            Text(' Updated Date', style: TextStyle(color: textColor)),
+            Text(' Updated', style: TextStyle(color: textColor)),
           ],
         );
       default:
         return Row(
           children: [
             const Icon(Icons.close),
-            Text(' Invalid Sort Type', style: TextStyle(color: textColor)),
+            Text('Invalid Sort Type', style: TextStyle(color: textColor)),
           ],
         );
     }

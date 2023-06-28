@@ -154,16 +154,13 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: QuizSortDropdown(
-              sortType: sortType,
-              onChanged: (QuizSortType newSortType) {
-                setState(() {
-                  sortType = newSortType;
-                });
-              },
-            ),
+          QuizSortDropdown(
+            sortType: sortType,
+            onChanged: (QuizSortType newSortType) {
+              setState(() {
+                sortType = newSortType;
+              });
+            },
           ),
           IconButton(
             icon: const Icon(Icons.settings),
