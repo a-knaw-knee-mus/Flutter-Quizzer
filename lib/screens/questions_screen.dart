@@ -132,7 +132,7 @@ class _QuizScreenState extends State<QuizScreen> {
     Question question,
   ) {
     return ActionPane(
-      extentRatio: 0.3,
+      extentRatio: 0.4,
       motion: const DrawerMotion(),
       children: [
         SlidableAction(
@@ -169,8 +169,8 @@ class _QuizScreenState extends State<QuizScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Tooltip(
-              message: quiz.name,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
               child: Text(
                 quiz.name,
                 style: const TextStyle(
@@ -179,8 +179,8 @@ class _QuizScreenState extends State<QuizScreen> {
                 overflow: TextOverflow.fade,
               ),
             ),
-            Tooltip(
-              message: quiz.description,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
               child: Text(
                 quiz.description,
                 style: const TextStyle(
@@ -249,11 +249,15 @@ class _QuizScreenState extends State<QuizScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Your quiz is empty. Add a question below!',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Text(
+                        'Your quiz is empty. Add a question below!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     Icon(Icons.arrow_downward_rounded, size: 40),

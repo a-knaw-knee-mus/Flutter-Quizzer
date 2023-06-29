@@ -57,6 +57,7 @@ class TestSummary extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
+                  textAlign: TextAlign.center,
                   getCompletionText(totalQuestions.length),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
@@ -177,10 +178,11 @@ class TestSummary extends StatelessWidget {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             const Text(
-                                              'Completed Questions',
+                                              'Completed Terms',
                                               style: TextStyle(
+                                                fontWeight: FontWeight.bold,
                                                 color: Colors.black,
-                                                fontSize: 18,
+                                                fontSize: 20,
                                               ),
                                             ),
                                             Container(
@@ -200,7 +202,7 @@ class TestSummary extends StatelessWidget {
                                                   style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black,
-                                                    fontSize: 15,
+                                                    fontSize: 20,
                                                   ),
                                                 ),
                                               ),

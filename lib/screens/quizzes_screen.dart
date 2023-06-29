@@ -114,7 +114,7 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
   ) {
     return ActionPane(
       motion: const DrawerMotion(),
-      extentRatio: 0.3,
+      extentRatio: 0.4,
       children: [
         SlidableAction(
           onPressed: (context) {
@@ -201,11 +201,15 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'You have no quizzes. Add a quiz below!',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text(
+                          'You have no quizzes. Add a quiz below!',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                       Icon(Icons.arrow_downward_rounded, size: 40),

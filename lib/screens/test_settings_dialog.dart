@@ -110,6 +110,7 @@ class _TestSettingsDialogState extends State<TestSettingsDialog> {
                   ),
                 ),
                 SegmentedButton(
+                  showSelectedIcon: false,
                   segments: const <ButtonSegment<OrientationType>>[
                     ButtonSegment<OrientationType>(
                       value: OrientationType.term,
@@ -144,6 +145,7 @@ class _TestSettingsDialogState extends State<TestSettingsDialog> {
                   ),
                 ),
                 SegmentedButton(
+                  showSelectedIcon: false,
                   segments: const <ButtonSegment<StarredType>>[
                     ButtonSegment<StarredType>(
                       value: StarredType.all,

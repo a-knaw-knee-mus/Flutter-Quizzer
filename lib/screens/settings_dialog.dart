@@ -19,7 +19,7 @@ class SettingsDialog extends StatelessWidget {
     AlignType alignType = context.watch<AlignProvider>().alignType;
 
     return AlertDialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 24),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(32.0)),
       ),
@@ -35,6 +35,7 @@ class SettingsDialog extends StatelessWidget {
               children: [
                 const Text('Tile display type: '),
                 SegmentedButton<AlignType>(
+                  showSelectedIcon: false,
                   segments: const <ButtonSegment<AlignType>>[
                     ButtonSegment<AlignType>(
                       value: AlignType.left,

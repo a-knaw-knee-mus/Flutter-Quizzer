@@ -44,113 +44,83 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
     if (carouselLength < 1) return Container();
 
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Tooltip(
-                  message: 'Skip to start',
-                  child: IconButton(
-                    onPressed: () => controller.jumpToPage(0),
-                    icon: const Icon(Icons.skip_previous_rounded),
-                  ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Tooltip(
+                message: 'Skip to start',
+                child: IconButton(
+                  onPressed: () => controller.jumpToPage(0),
+                  icon: const Icon(Icons.skip_previous_rounded),
                 ),
-                Text(
-                  "${widget.starredOnly ? 'Starred ' : ''}Term ${currCarouselPage + 1}/$carouselLength",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: themeColor[800],
-                  ),
+              ),
+              Text(
+                "${widget.starredOnly ? 'Starred ' : ''}Term ${currCarouselPage + 1}/$carouselLength",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: themeColor[800],
                 ),
-                Tooltip(
-                  message: 'Skip to end',
-                  child: IconButton(
-                    onPressed: () => controller.jumpToPage(carouselLength - 1),
-                    icon: const Icon(Icons.skip_next_rounded),
-                  ),
+              ),
+              Tooltip(
+                message: 'Skip to end',
+                child: IconButton(
+                  onPressed: () => controller.jumpToPage(carouselLength - 1),
+                  icon: const Icon(Icons.skip_next_rounded),
                 ),
-              ],
-            ),
-            SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    height: 200,
-                    child: PageView.builder(
-                      controller: controller,
-                      onPageChanged: (value) {
-                        setState(() => currCarouselPage = value);
-                      },
-                      itemCount: carouselLength,
-                      itemBuilder: (_, index) {
-                        index %= carouselLength;
-                        Question question =
-                            questionBox.get(questionKeysFiltered[index])!;
-                        FlipCardController flipCon = FlipCardController();
-                        return AnimatedScale(
-                          duration: const Duration(milliseconds: 150),
-                          scale: currCarouselPage == index ? 1 : 0.90,
-                          child: FlipCard(
-                            animationDuration:
-                                const Duration(milliseconds: 250),
-                            controller: flipCon,
-                            rotateSide: RotateSide.bottom,
-                            axis: FlipAxis.horizontal,
-                            onTapFlipping: true,
-                            frontWidget: TestExpandButton(
-                              questionKeys: widget.questionKeys,
-                              card: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  color: themeColor[200],
-                                ),
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
-                                ),
-                                child: Center(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.vertical,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Text(
-                                        question.term,
-                                        style: TextStyle(
-                                          fontSize: 30,
-                                          color: themeColor[800],
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+              ),
+            ],
+          ),
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 180,
+                  child: PageView.builder(
+                    controller: controller,
+                    onPageChanged: (value) {
+                      setState(() => currCarouselPage = value);
+                    },
+                    itemCount: carouselLength,
+                    itemBuilder: (_, index) {
+                      index %= carouselLength;
+                      Question question =
+                          questionBox.get(questionKeysFiltered[index])!;
+                      FlipCardController flipCon = FlipCardController();
+                      return AnimatedScale(
+                        duration: const Duration(milliseconds: 150),
+                        scale: currCarouselPage == index ? 1 : 0.90,
+                        child: FlipCard(
+                          animationDuration:
+                              const Duration(milliseconds: 250),
+                          controller: flipCon,
+                          rotateSide: RotateSide.bottom,
+                          axis: FlipAxis.horizontal,
+                          onTapFlipping: true,
+                          frontWidget: TestExpandButton(
+                            questionKeys: widget.questionKeys,
+                            card: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: themeColor[200],
                               ),
-                            ),
-                            backWidget: TestExpandButton(
-                              questionKeys: widget.questionKeys,
-                              card: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  color: themeColor[200],
-                                ),
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                child: Center(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.vertical,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Text(
-                                        question.definition,
-                                        style: TextStyle(
-                                          fontSize: 30,
-                                          color: themeColor[800],
-                                          fontWeight: FontWeight.w400,
-                                        ),
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 10,
+                              ),
+                              child: Center(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Text(
+                                      question.term,
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                        color: themeColor[800],
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ),
@@ -158,30 +128,55 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                               ),
                             ),
                           ),
-                        );
-                      },
-                    ),
+                          backWidget: TestExpandButton(
+                            questionKeys: widget.questionKeys,
+                            card: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: themeColor[200],
+                              ),
+                              child: Center(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Text(
+                                      question.definition,
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                        color: themeColor[800],
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                  SmoothPageIndicator(
-                    controller: controller,
-                    count: carouselLength,
-                    effect: ScrollingDotsEffect(
-                      activeStrokeWidth: 3,
-                      activeDotScale: 1.2,
-                      maxVisibleDots: 5,
-                      spacing: 10,
-                      dotHeight: 12,
-                      dotWidth: 12,
-                      fixedCenter: true,
-                      dotColor: themeColor,
-                      activeDotColor: themeColor,
-                    ),
+                ),
+                SmoothPageIndicator(
+                  controller: controller,
+                  count: carouselLength,
+                  effect: ScrollingDotsEffect(
+                    activeStrokeWidth: 3,
+                    activeDotScale: 1.2,
+                    maxVisibleDots: 5,
+                    spacing: 10,
+                    dotHeight: 12,
+                    dotWidth: 12,
+                    fixedCenter: true,
+                    dotColor: themeColor,
+                    activeDotColor: themeColor,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -7,8 +7,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 class QuestionTile extends StatelessWidget {
-  // final String term;
-  // final String definition;
   final String questionId;
   final Question question;
 
