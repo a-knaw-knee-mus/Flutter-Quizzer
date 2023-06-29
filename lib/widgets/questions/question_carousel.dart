@@ -23,7 +23,7 @@ class QuestionCarousel extends StatefulWidget {
 }
 
 class _QuestionCarouselState extends State<QuestionCarousel> {
-  final controller = PageController(viewportFraction: 0.8, keepPage: true);
+  final controller = PageController(viewportFraction: 0.8, initialPage: 0);
   final questionBox = Hive.box<Question>('questionBox');
   int currCarouselPage = 0;
 
@@ -31,7 +31,6 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
   Widget build(BuildContext context) {
     MaterialColor themeColor =
         context.watch<ColorProvider>().color.getColorSwatch();
-    final questionBox = Hive.box<Question>('questionBox');
     List questionKeysFiltered = widget.questionKeys;
     if (widget.starredOnly) {
       questionKeysFiltered = widget.questionKeys
@@ -77,7 +76,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
-                  height: 180,
+                  height: 170,
                   child: PageView.builder(
                     controller: controller,
                     onPageChanged: (value) {
@@ -93,8 +92,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                         duration: const Duration(milliseconds: 150),
                         scale: currCarouselPage == index ? 1 : 0.90,
                         child: FlipCard(
-                          animationDuration:
-                              const Duration(milliseconds: 250),
+                          animationDuration: const Duration(milliseconds: 250),
                           controller: flipCon,
                           rotateSide: RotateSide.bottom,
                           axis: FlipAxis.horizontal,
@@ -106,9 +104,10 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                                 borderRadius: BorderRadius.circular(16),
                                 color: themeColor[200],
                               ),
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 10,
+                              margin: const EdgeInsets.only(
+                                left: 10,
+                                right: 10,
+                                bottom: 10,
                               ),
                               child: Center(
                                 child: SingleChildScrollView(
@@ -134,6 +133,11 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(16),
                                 color: themeColor[200],
+                              ),
+                              margin: const EdgeInsets.only(
+                                left: 10,
+                                right: 10,
+                                bottom: 10,
                               ),
                               child: Center(
                                 child: SingleChildScrollView(

@@ -284,6 +284,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 QuestionCarousel(
                   questionKeys: questionKeys,
                   starredOnly: starredOnly,
+                  key: UniqueKey(),
                 ),
                 Expanded(
                   child: ShaderMask(

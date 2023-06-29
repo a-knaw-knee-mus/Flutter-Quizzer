@@ -77,14 +77,23 @@ class TestSummary extends StatelessWidget {
                           progressColor: Colors.green[700],
                           backgroundColor: Colors.orange,
                           circularStrokeCap: CircularStrokeCap.round,
-                          percent: knownQuestions.length / totalQuestions.length,
-                          center: Text(
-                            '${'${knownQuestions.length / totalQuestions.length * 100}'.split('.').first}%',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22,
-                            ),
-                          ),
+                          percent: sorting
+                              ? knownQuestions.length / totalQuestions.length
+                              : 1,
+                          center: sorting
+                              ? Text(
+                                  '${'${knownQuestions.length / totalQuestions.length * 100}'.split('.').first}%',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22,
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.check_rounded,
+                                  color: Colors.green[700],
+                                  size: 40,
+                                  weight: 60,
+                                ),
                         ),
                         Expanded(
                           child: Padding(
@@ -99,15 +108,16 @@ class TestSummary extends StatelessWidget {
                                           children: [
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
                                                   'Know',
                                                   style: TextStyle(
-                                                    color: Colors.green[800],
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold
-                                                  ),
+                                                      color: Colors.green[800],
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
                                                 Container(
                                                   width: 30,
@@ -118,14 +128,17 @@ class TestSummary extends StatelessWidget {
                                                       width: 1.5,
                                                     ),
                                                     borderRadius:
-                                                        BorderRadius.circular(20),
+                                                        BorderRadius.circular(
+                                                            20),
                                                   ),
                                                   child: Center(
                                                     child: Text(
                                                       '${knownQuestions.length}',
                                                       style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.green[800]!,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            Colors.green[800]!,
                                                         fontSize: 20,
                                                       ),
                                                     ),
@@ -135,33 +148,38 @@ class TestSummary extends StatelessWidget {
                                             ),
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
                                                   'Still learning',
                                                   style: TextStyle(
-                                                    color: Colors.orange[800],
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold
-                                                  ),
+                                                      color: Colors.orange[800],
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
                                                 Container(
                                                   width: 30,
                                                   height: 30,
                                                   decoration: BoxDecoration(
                                                     border: Border.all(
-                                                      color: Colors.orange[800]!,
+                                                      color:
+                                                          Colors.orange[800]!,
                                                       width: 1.5,
                                                     ),
                                                     borderRadius:
-                                                        BorderRadius.circular(20),
+                                                        BorderRadius.circular(
+                                                            20),
                                                   ),
                                                   child: Center(
                                                     child: Text(
                                                       '${dontKnowQuestions.length}',
                                                       style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.orange[800]!,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            Colors.orange[800]!,
                                                         fontSize: 20,
                                                       ),
                                                     ),
@@ -218,24 +236,27 @@ class TestSummary extends StatelessWidget {
                     ),
                   ),
                 ),
-                dontKnowQuestions.isNotEmpty ? MaterialButton(
-                  child: const Text(
-                    'REDO FAILED QUESTIONS',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                        return TestScreen(questionKeys: dontKnowQuestions);
-                      }),
-                    );
-                  },
-                ) : Container(),
+                dontKnowQuestions.isNotEmpty
+                    ? MaterialButton(
+                        child: const Text(
+                          'REDO FAILED QUESTIONS',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (BuildContext context) {
+                              return TestScreen(
+                                  questionKeys: dontKnowQuestions);
+                            }),
+                          );
+                        },
+                      )
+                    : Container(),
               ],
             ),
           ),
