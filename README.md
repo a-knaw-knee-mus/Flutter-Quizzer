@@ -1,4 +1,3 @@
 - Flash card mobile app created using Flutter as my first Flutter project
 - Similar to Quizlet with the main difference being the use of a fully offline, local storage database to study on-the-go
-- Still a work in progress, but will eventually be released as an app for download
 - NO TEMPLATES, NOTHING. This was all me. Everything in the lib/ folder... yea I made all that myself. My design, my vision, all me. 😎
