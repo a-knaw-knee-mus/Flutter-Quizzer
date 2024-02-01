@@ -8,6 +8,7 @@ import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:upgrader/upgrader.dart';
 
 class ColorProvider extends ChangeNotifier {
   ColorType _color = ColorType.purple;
@@ -86,10 +87,11 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'QuizWiz',
-      home: const MyPage(),
+      home: UpgradeAlert(child: const MyPage()),
       theme: ThemeData(
         primarySwatch: context.watch<ColorProvider>().color.getColorSwatch(),
         textTheme: GoogleFonts.jostTextTheme(),
+        useMaterial3: false,
       ),
       debugShowCheckedModeBanner: false,
     );

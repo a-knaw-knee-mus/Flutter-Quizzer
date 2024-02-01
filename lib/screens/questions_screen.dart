@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/util/align_types.dart';
@@ -13,6 +15,7 @@ import 'package:flutter_quizzer/widgets/questions/question_tile.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -36,6 +39,102 @@ class _QuizScreenState extends State<QuizScreen> {
   final questionBox = Hive.box<Question>('questionBox');
   QuestionSortType sortType = QuestionSortType.termAsc;
   bool starredOnly = false;
+
+  void exportQuiz() async {
+    // Retrieve questions in the same order as on the screen.
+    // Ex. If the user selected 'starred-only' with 'Term Asc', then the order of the questions should be all starred first, followed by non-starred, each with 'Term Asc'.
+    Box<Question> questionBox = Hive.box<Question>('questionBox');
+    final List sortedIds = sortType.sortQuestionIds(
+        questionBox); // all question keys sorted based on the sort type selected
+    final List questionKeys = sortedIds.where((key) {
+      // question keys part of this quiz
+      Question question = questionBox.get(key)!;
+      if (question.quizId == widget.quizId) {
+        return true;
+      }
+      return false;
+    }).toList();
+
+    List questionKeysStarred = [];
+    if (starredOnly) {
+      questionKeysStarred =
+          questionKeys.where((key) => questionBox.get(key)!.isStarred).toList();
+    }
+    final List questionKeysUnstarred = questionKeys
+        .where((key) => !questionKeysStarred.contains(key))
+        .toList();
+
+    // Create export txt file
+    String output = '${quiz.name}--${quiz.description}\n';
+
+    for (String key in questionKeysStarred) {
+      Question question = questionBox.get(key)!;
+      output += '${question.term}--${question.definition}\n';
+      print(question.term);
+    }
+
+    for (String key in questionKeysUnstarred) {
+      Question question = questionBox.get(key)!;
+      output += '${question.term}--${question.definition}\n';
+      print(question.term);
+    }
+
+    try {
+      Directory? directory = await getExternalStorageDirectory();
+      String newPath = "";
+      List<String> folders = directory!.path.split("/");
+      for (int x = 1; x < folders.length; x++) {
+        if (folders[x] != "Android") {
+          newPath += "/${folders[x]}";
+        } else {
+          break;
+        }
+      }
+      newPath += "/Documents/Quizwiz/Quizzes";
+      final Directory newDirectory = Directory(newPath);
+      if (!await newDirectory.exists()) {
+        await newDirectory.create(recursive: true);
+      }
+      String quizCutName = quiz.name;
+      if (quizCutName.length > 20) quizCutName = quizCutName.substring(0, 20);
+      String quizCutId = widget.quizId;
+      if (quizCutId.length > 20) quizCutId = quizCutId.substring(0, 6);
+      final File file = File('$newPath/$quizCutName-$quizCutId.txt');
+      await file.writeAsString(output);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Saved quiz to $newPath.\nFile name: $quizCutName-$quizCutId.txt',
+              style: GoogleFonts.jost(),
+            ),
+            duration: const Duration(
+              milliseconds: 3000,
+            ),
+            showCloseIcon: true,
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to export quiz.',
+              style: GoogleFonts.jost(),
+            ),
+            duration: const Duration(
+              milliseconds: 1500,
+            ),
+            showCloseIcon: true,
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   void saveNewQuestion(
     String term,
@@ -205,12 +304,18 @@ class _QuizScreenState extends State<QuizScreen> {
             icon: starredOnly
                 ? const Icon(Icons.star_rate_rounded)
                 : const Icon(Icons.star_border_rounded),
-            tooltip: 'Toggle starred questions',
+            tooltip: 'Toggle starred questions.',
             onPressed: () {
               setState(() {
                 starredOnly = !starredOnly;
               });
             },
+          ),
+          IconButton(
+            icon: const Icon(Icons.save_alt_rounded),
+            tooltip:
+                'Save quiz to local storage; preserves sort type and starred preference.',
+            onPressed: exportQuiz,
           )
         ],
       ),
@@ -243,7 +348,7 @@ class _QuizScreenState extends State<QuizScreen> {
               }
               return false;
             }).toList();
-      
+
             if (questionKeys.isEmpty) {
               return const Center(
                 child: Column(
@@ -265,20 +370,20 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
               );
             }
-      
+
             final List questionKeysStarred = questionKeys
                 .where((key) => questionBox.get(key)!.isStarred)
                 .toList();
             final List questionKeysUnstarred = questionKeys
                 .where((key) => !questionKeysStarred.contains(key))
                 .toList();
-      
+
             // list of keys in quiz but showing starred terms first
             final List keysStarredUnstarred = [
               ...questionKeysStarred,
               ...questionKeysUnstarred
             ];
-      
+
             return Column(
               children: [
                 QuestionCarousel(
@@ -308,18 +413,19 @@ class _QuizScreenState extends State<QuizScreen> {
                           : questionKeys.length + 1,
                       itemBuilder: (context, index) {
                         // whitespace at the end
-                        if (starredOnly && index == keysStarredUnstarred.length) {
+                        if (starredOnly &&
+                            index == keysStarredUnstarred.length) {
                           return const SizedBox(height: 65);
                         }
                         if (!starredOnly && index == questionKeys.length) {
                           return const SizedBox(height: 65);
                         }
-                      
+
                         final questionId = starredOnly
                             ? keysStarredUnstarred[index]
                             : questionKeys[index];
                         Question question = questionBox.get(questionId)!;
-                      
+
                         return Column(
                           children: [
                             Padding(
@@ -330,12 +436,18 @@ class _QuizScreenState extends State<QuizScreen> {
                               ),
                               child: Slidable(
                                 startActionPane: alignType == AlignType.left
-                                    ? getActionPane(deleteQuestion,
-                                        showQuestionDialog, questionId, question)
+                                    ? getActionPane(
+                                        deleteQuestion,
+                                        showQuestionDialog,
+                                        questionId,
+                                        question)
                                     : null,
                                 endActionPane: alignType == AlignType.right
-                                    ? getActionPane(deleteQuestion,
-                                        showQuestionDialog, questionId, question)
+                                    ? getActionPane(
+                                        deleteQuestion,
+                                        showQuestionDialog,
+                                        questionId,
+                                        question)
                                     : null,
                                 child: QuestionTile(
                                   question: question,
@@ -351,10 +463,12 @@ class _QuizScreenState extends State<QuizScreen> {
                                     child: Divider(
                                       thickness: 2,
                                       color: themeColor[400],
-                                      endIndent:
-                                          (alignType == AlignType.left) ? 80 : 0,
-                                      indent:
-                                          (alignType == AlignType.right) ? 80 : 0,
+                                      endIndent: (alignType == AlignType.left)
+                                          ? 80
+                                          : 0,
+                                      indent: (alignType == AlignType.right)
+                                          ? 80
+                                          : 0,
                                     ),
                                   )
                                 : Container(),
