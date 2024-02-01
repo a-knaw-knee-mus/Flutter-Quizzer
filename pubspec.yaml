@@ -48,6 +48,8 @@ dependencies:
   percent_indicator: ^4.2.3
   line_icons: ^2.0.1
   url_launcher: ^6.1.11
+  code_text_field: ^1.1.0
+  file_picker: ^6.1.1
 
 dev_dependencies:
   flutter_test:
