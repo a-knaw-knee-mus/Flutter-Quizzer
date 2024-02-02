@@ -116,6 +116,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                                     padding: const EdgeInsets.all(15.0),
                                     child: Text(
                                       question.term,
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 30,
                                         color: themeColor[800],
@@ -146,6 +147,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                                     padding: const EdgeInsets.all(15.0),
                                     child: Text(
                                       question.definition,
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 30,
                                         color: themeColor[800],
