@@ -125,6 +125,7 @@ class _QuizDialogState extends State<QuizDialog> {
               backgroundColor: Colors.red,
             ),
           );
+          Navigator.of(context).pop();
         }
         return;
       }
@@ -152,6 +153,22 @@ class _QuizDialogState extends State<QuizDialog> {
           continue;
         }
       }
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Quiz imported.',
+              style: GoogleFonts.jost(),
+            ),
+            duration: const Duration(
+              milliseconds: 1500,
+            ),
+            showCloseIcon: true,
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.of(context).pop();
+      }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -167,6 +184,7 @@ class _QuizDialogState extends State<QuizDialog> {
             backgroundColor: Colors.red,
           ),
         );
+        Navigator.of(context).pop();
       }
     }
   }

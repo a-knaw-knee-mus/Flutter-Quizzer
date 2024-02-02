@@ -70,13 +70,11 @@ class _QuizScreenState extends State<QuizScreen> {
     for (String key in questionKeysStarred) {
       Question question = questionBox.get(key)!;
       output += '${question.term}--${question.definition}\n';
-      print(question.term);
     }
 
     for (String key in questionKeysUnstarred) {
       Question question = questionBox.get(key)!;
       output += '${question.term}--${question.definition}\n';
-      print(question.term);
     }
 
     try {
