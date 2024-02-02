@@ -63,6 +63,59 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
     });
   }
 
+  AlertDialog showQuizDeleteDialog(quizId) {
+    return AlertDialog(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(32.0)),
+      ),
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "Are you sure you want to delete this quiz?\n",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.robotoMono(fontSize: 14),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  deleteQuiz(quizId);
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  elevation: 12.0,
+                  textStyle: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                child: Text(
+                  'Yes',
+                  style: GoogleFonts.jost(),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  elevation: 12.0,
+                  textStyle: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                child: Text(
+                  'No',
+                  style: GoogleFonts.jost(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   void deleteQuiz(String quizId) {
     setState(() {
       quizBox.delete(quizId);
@@ -118,7 +171,12 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
       children: [
         SlidableAction(
           onPressed: (context) {
-            deleteQuiz(quizId);
+            showDialog(
+              context: context,
+              builder: (context) {
+                return showQuizDeleteDialog(quizId);
+              },
+            );
           },
           icon: Icons.delete,
           backgroundColor: Colors.red,
@@ -195,7 +253,7 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
             valueListenable: Hive.box<Quiz>('quizBox').listenable(),
             builder: (context, quizzes, _) {
               final List sortedIds = sortType.sortQuizIds(quizzes);
-      
+
               if (sortedIds.isEmpty) {
                 return const Center(
                   child: Column(
@@ -217,7 +275,7 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                   ),
                 );
               }
-      
+
               return ShaderMask(
                 shaderCallback: (Rect rect) {
                   return const LinearGradient(
@@ -244,20 +302,20 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                     if (index == sortedIds.length) {
                       return const SizedBox(height: 65);
                     }
-      
+
                     final quizId = sortedIds[index];
                     final quiz = quizzes.get(quizId)!;
                     final questionBox = Hive.box<Question>('questionBox');
                     int quizSize = questionBox.values.where((question) {
                       return question.quizId == quizId;
                     }).length;
-      
+
                     void modifyCount(int change) {
                       setState(() {
                         quizSize += change;
                       });
                     }
-      
+
                     return Padding(
                       padding: EdgeInsets.only(
                         top: 20.0,
