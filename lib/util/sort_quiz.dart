@@ -111,4 +111,44 @@ extension QuizSortExtension on QuizSortType {
         }
       });
   }
+
+  String getName() {
+    switch (this) {
+      case QuizSortType.nameAsc:
+        return 'nameAsc';
+      case QuizSortType.nameDesc:
+        return 'nameDesc';
+      case QuizSortType.createdDateAsc:
+        return 'createdDateAsc';
+      case QuizSortType.createdDateDesc:
+        return 'createdDateDesc';
+      case QuizSortType.updatedDateAsc:
+        return 'updatedDateAsc';
+      case QuizSortType.updatedDateDesc:
+        return 'updatedDateDesc';
+      default:
+        return 'nameAsc';
+    }
+  }
+
+  static QuizSortType getQuizSortTypeFromString(String quizSortType) {
+    quizSortType = quizSortType.toLowerCase();
+
+    switch (quizSortType) {
+      case 'nameAsc':
+        return QuizSortType.nameAsc;
+      case 'nameDesc':
+        return QuizSortType.nameDesc;
+      case 'createdDateAsc':
+        return QuizSortType.createdDateAsc;
+      case 'createdDateDesc':
+        return QuizSortType.createdDateDesc;
+      case 'updatedDateAsc':
+        return QuizSortType.updatedDateAsc;
+      case 'updatedDateDesc':
+        return QuizSortType.updatedDateDesc;
+      default:
+        return QuizSortType.nameAsc;
+    }
+  }
 }

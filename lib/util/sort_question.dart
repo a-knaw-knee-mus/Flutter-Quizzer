@@ -111,4 +111,44 @@ extension QuestionSortExtension on QuestionSortType {
         }
       });
   }
+
+  String getName() {
+    switch (this) {
+      case QuestionSortType.termAsc:
+        return 'termAsc';
+      case QuestionSortType.termDesc:
+        return 'termDesc';
+      case QuestionSortType.createdDateAsc:
+        return 'createdDateAsc';
+      case QuestionSortType.createdDateDesc:
+        return 'createdDateDesc';
+      case QuestionSortType.updatedDateAsc:
+        return 'updatedDateAsc';
+      case QuestionSortType.updatedDateDesc:
+        return 'updatedDateDesc';
+      default:
+        return 'termAsc';
+    }
+  }
+
+  static QuestionSortType getQuestionSortTypeFromString(String questionSortType) {
+    questionSortType = questionSortType.toLowerCase();
+
+    switch (questionSortType) {
+      case 'termAsc':
+        return QuestionSortType.termAsc;
+      case 'termDesc':
+        return QuestionSortType.termDesc;
+      case 'createdDateAsc':
+        return QuestionSortType.createdDateAsc;
+      case 'createdDateDesc':
+        return QuestionSortType.createdDateDesc;
+      case 'updatedDateAsc':
+        return QuestionSortType.updatedDateAsc;
+      case 'updatedDateDesc':
+        return QuestionSortType.updatedDateDesc;
+      default:
+        return QuestionSortType.termAsc;
+    }
+  }
 }

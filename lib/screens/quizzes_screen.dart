@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/main.dart';
+import 'package:flutter_quizzer/schema/preference.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/schema/quiz.dart';
 import 'package:flutter_quizzer/screens/quiz_dialog_screen.dart';
@@ -25,7 +26,6 @@ class QuizzesScreen extends StatefulWidget {
 
 class _QuizzesScreenState extends State<QuizzesScreen> {
   final quizBox = Hive.box<Quiz>('quizBox');
-  QuizSortType sortType = QuizSortType.nameAsc;
 
   void saveNewQuiz(
     String name,
@@ -201,6 +201,7 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
     AlignType alignType = context.watch<AlignProvider>().alignType;
     MaterialColor themeColor =
         context.watch<ColorProvider>().color.getColorSwatch();
+    QuizSortType sortType = context.watch<QuizSortTypeProvider>().quizSortType;
 
     return Scaffold(
       appBar: AppBar(
@@ -214,9 +215,14 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
         actions: [
           QuizSortDropdown(
             sortType: sortType,
-            onChanged: (QuizSortType newSortType) {
+            onChanged: (QuizSortType newQuizSortType) {
               setState(() {
-                sortType = newSortType;
+                context.read<QuizSortTypeProvider>().quizSortType =
+                    newQuizSortType;
+                Hive.box<Preference>('prefBox').put(
+                  'quizSortType',
+                  Preference(value: newQuizSortType.getName()),
+                );
               });
             },
           ),

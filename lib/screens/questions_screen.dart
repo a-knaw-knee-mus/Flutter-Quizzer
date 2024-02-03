@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/main.dart';
+import 'package:flutter_quizzer/schema/preference.dart';
 import 'package:flutter_quizzer/util/align_types.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
 import 'package:flutter_quizzer/util/form_types.dart';
@@ -37,10 +38,9 @@ class _QuizScreenState extends State<QuizScreen> {
   final quizBox = Hive.box<Quiz>('quizBox');
   late final Quiz quiz = quizBox.get(widget.quizId)!;
   final questionBox = Hive.box<Question>('questionBox');
-  QuestionSortType sortType = QuestionSortType.termAsc;
   bool starredOnly = false;
 
-  void exportQuiz() async {
+  void exportQuiz(QuestionSortType sortType) async {
     // Retrieve questions in the same order as on the screen.
     // Ex. If the user selected 'starred-only' with 'Term Asc', then the order of the questions should be all starred first, followed by non-starred, each with 'Term Asc'.
     Box<Question> questionBox = Hive.box<Question>('questionBox');
@@ -259,6 +259,8 @@ class _QuizScreenState extends State<QuizScreen> {
     AlignType alignType = context.watch<AlignProvider>().alignType;
     MaterialColor themeColor =
         context.watch<ColorProvider>().color.getColorSwatch();
+    QuestionSortType sortType =
+        context.watch<QuestionSortTypeProvider>().questionSortType;
 
     return Scaffold(
       appBar: AppBar(
@@ -292,9 +294,14 @@ class _QuizScreenState extends State<QuizScreen> {
         actions: [
           QuestionSortDropdown(
             sortType: sortType,
-            onChanged: (QuestionSortType newSortType) {
+            onChanged: (QuestionSortType newQuestionSortType) {
               setState(() {
-                sortType = newSortType;
+                context.read<QuestionSortTypeProvider>().questionSortType =
+                    newQuestionSortType;
+                Hive.box<Preference>('prefBox').put(
+                  'questionSortType',
+                  Preference(value: newQuestionSortType.getName()),
+                );
               });
             },
           ),
@@ -313,7 +320,9 @@ class _QuizScreenState extends State<QuizScreen> {
             icon: const Icon(Icons.save_alt_rounded),
             tooltip:
                 'Save quiz to local storage; preserves sort type and starred preference.',
-            onPressed: exportQuiz,
+            onPressed: () {
+              exportQuiz(sortType);
+            },
           )
         ],
       ),
