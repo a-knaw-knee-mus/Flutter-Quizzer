@@ -391,101 +391,100 @@ class _QuizScreenState extends State<QuizScreen> {
               ...questionKeysUnstarred
             ];
 
-            return Column(
-              children: [
-                QuestionCarousel(
-                  questionKeys: questionKeys,
-                  starredOnly: starredOnly,
-                  key: UniqueKey(),
-                ),
-                Expanded(
-                  child: ShaderMask(
-                    shaderCallback: (Rect rect) {
-                      return const LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.red, // arbitrary
-                          Colors.transparent,
-                          Colors.transparent,
-                          Colors.red // arbitrary
-                        ],
-                        stops: [0.0, 0.04, 0.88, 1.0],
-                      ).createShader(rect);
-                    },
-                    blendMode: BlendMode.dstOut,
-                    child: ListView.builder(
-                      itemCount: starredOnly
-                          ? keysStarredUnstarred.length + 1
-                          : questionKeys.length + 1,
-                      itemBuilder: (context, index) {
-                        // whitespace at the end
-                        if (starredOnly &&
-                            index == keysStarredUnstarred.length) {
-                          return const SizedBox(height: 65);
-                        }
-                        if (!starredOnly && index == questionKeys.length) {
-                          return const SizedBox(height: 65);
-                        }
-
-                        final questionId = starredOnly
-                            ? keysStarredUnstarred[index]
-                            : questionKeys[index];
-                        Question question = questionBox.get(questionId)!;
-
-                        return Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: 20.0,
-                                right: alignType == AlignType.left ? 50.0 : 0,
-                                left: alignType == AlignType.right ? 50.0 : 0,
+            return ShaderMask(
+              shaderCallback: (Rect rect) {
+                return const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.red, // arbitrary
+                    Colors.transparent,
+                    Colors.transparent,
+                    Colors.red // arbitrary
+                  ],
+                  stops: [0.0, 0.03, 0.88, 1.0],
+                ).createShader(rect);
+              },
+              blendMode: BlendMode.dstOut,
+              child: ListView.builder(
+                itemCount: starredOnly
+                    ? keysStarredUnstarred.length + 2 // +2, one for question carousel, one for whitespace
+                    : questionKeys.length + 2,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return QuestionCarousel(
+                      questionKeys: questionKeys,
+                      starredOnly: starredOnly,
+                      key: UniqueKey(),
+                    );
+                  }
+            
+                  index -= 1; // question carousel is first element so offset by 1
+            
+                  // whitespace at the end
+                  if (starredOnly &&
+                      index == keysStarredUnstarred.length) {
+                    return const SizedBox(height: 75);
+                  }
+                  if (!starredOnly && index == questionKeys.length) {
+                    return const SizedBox(height: 75);
+                  }
+            
+                  final questionId = starredOnly
+                      ? keysStarredUnstarred[index]
+                      : questionKeys[index];
+                  Question question = questionBox.get(questionId)!;
+            
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: 20.0,
+                          right: alignType == AlignType.left ? 50.0 : 0,
+                          left: alignType == AlignType.right ? 50.0 : 0,
+                        ),
+                        child: Slidable(
+                          startActionPane: alignType == AlignType.left
+                              ? getActionPane(
+                                  deleteQuestion,
+                                  showQuestionDialog,
+                                  questionId,
+                                  question)
+                              : null,
+                          endActionPane: alignType == AlignType.right
+                              ? getActionPane(
+                                  deleteQuestion,
+                                  showQuestionDialog,
+                                  questionId,
+                                  question)
+                              : null,
+                          child: QuestionTile(
+                            question: question,
+                            questionId: questionId,
+                          ),
+                        ),
+                      ),
+                      starredOnly &&
+                              index == questionKeysStarred.length - 1 &&
+                              questionKeysUnstarred.isNotEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child: Divider(
+                                thickness: 2,
+                                color: themeColor[400],
+                                endIndent: (alignType == AlignType.left)
+                                    ? 80
+                                    : 0,
+                                indent: (alignType == AlignType.right)
+                                    ? 80
+                                    : 0,
                               ),
-                              child: Slidable(
-                                startActionPane: alignType == AlignType.left
-                                    ? getActionPane(
-                                        deleteQuestion,
-                                        showQuestionDialog,
-                                        questionId,
-                                        question)
-                                    : null,
-                                endActionPane: alignType == AlignType.right
-                                    ? getActionPane(
-                                        deleteQuestion,
-                                        showQuestionDialog,
-                                        questionId,
-                                        question)
-                                    : null,
-                                child: QuestionTile(
-                                  question: question,
-                                  questionId: questionId,
-                                ),
-                              ),
-                            ),
-                            starredOnly &&
-                                    index == questionKeysStarred.length - 1 &&
-                                    questionKeysUnstarred.isNotEmpty
-                                ? Padding(
-                                    padding: const EdgeInsets.only(top: 20.0),
-                                    child: Divider(
-                                      thickness: 2,
-                                      color: themeColor[400],
-                                      endIndent: (alignType == AlignType.left)
-                                          ? 80
-                                          : 0,
-                                      indent: (alignType == AlignType.right)
-                                          ? 80
-                                          : 0,
-                                    ),
-                                  )
-                                : Container(),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
+                            )
+                          : Container(),
+                    ],
+                  );
+                },
+              ),
             );
           },
         ),
