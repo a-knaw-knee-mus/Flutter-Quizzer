@@ -132,10 +132,13 @@ class _QuizDialogState extends State<QuizDialog> {
 
       lines.removeAt(0);
       final questionBox = Hive.box<Question>('questionBox');
+      Duration timeStep = const Duration(milliseconds: 1); // add time offset to keep order
+      DateTime currentDateTime = DateTime.now();
       for (String line in lines) {
         try {
           List<String> parts = line.split('--');
           String term = parts[0], definition = parts[1];
+          currentDateTime = currentDateTime.add(timeStep);
           setState(() {
             questionBox.put(
               const Uuid().v1(),
@@ -143,8 +146,8 @@ class _QuizDialogState extends State<QuizDialog> {
                 term: term,
                 definition: definition,
                 quizId: quizId,
-                createdAt: DateTime.now(),
-                updatedAt: DateTime.now(),
+                createdAt: currentDateTime,
+                updatedAt: currentDateTime,
                 isStarred: false,
               ),
             );

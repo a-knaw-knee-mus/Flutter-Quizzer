@@ -132,8 +132,6 @@ extension QuizSortExtension on QuizSortType {
   }
 
   static QuizSortType getQuizSortTypeFromString(String quizSortType) {
-    quizSortType = quizSortType.toLowerCase();
-
     switch (quizSortType) {
       case 'nameAsc':
         return QuizSortType.nameAsc;

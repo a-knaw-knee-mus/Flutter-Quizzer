@@ -132,8 +132,6 @@ extension QuestionSortExtension on QuestionSortType {
   }
 
   static QuestionSortType getQuestionSortTypeFromString(String questionSortType) {
-    questionSortType = questionSortType.toLowerCase();
-
     switch (questionSortType) {
       case 'termAsc':
         return QuestionSortType.termAsc;
