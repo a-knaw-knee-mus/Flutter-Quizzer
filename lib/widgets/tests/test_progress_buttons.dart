@@ -31,34 +31,52 @@ class ProgressButtonOverlays extends StatelessWidget {
         child,
         Container(
           alignment: Alignment.bottomRight,
-          padding: const EdgeInsets.only(bottom: 6, right: 12),
-          child: IconButton(
-            iconSize: 40,
-            onPressed: () {
-              if (sorting) {
-                knowQuestion(questionKey);
-              } else {
-                nextQuestion(questionKey);
-              }
-            },
-            icon: Icon(
-              Icons.check_rounded,
-              color: themeColor[800],
+          padding: const EdgeInsets.only(bottom: 10, right: 16),
+          child: Container(
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              color: themeColor[200],
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              iconSize: 40,
+              onPressed: () {
+                if (sorting) {
+                  knowQuestion(questionKey);
+                } else {
+                  nextQuestion(questionKey);
+                }
+              },
+              icon: Icon(
+                Icons.check_rounded,
+                color: themeColor[800],
+              ),
             ),
           ),
         ),
         sorting
             ? Container(
                 alignment: Alignment.bottomLeft,
-                padding: const EdgeInsets.only(bottom: 6, left: 12),
-                child: IconButton(
-                  iconSize: 40,
-                  onPressed: () {
-                    dontKnowQuestion(questionKey);
-                  },
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: themeColor[800],
+                padding: const EdgeInsets.only(bottom: 10, left: 12),
+                child: Container(
+                  width: 45,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: themeColor[200],
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: 40,
+                    onPressed: () {
+                      dontKnowQuestion(questionKey);
+                    },
+                    icon: Icon(
+                      Icons.close_rounded,
+                      color: themeColor[800],
+                    ),
                   ),
                 ),
               )

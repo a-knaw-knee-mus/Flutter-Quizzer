@@ -1,5 +1,6 @@
+import 'package:flip_card/flip_card.dart';
+import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/screens/test_screen.dart';
@@ -92,12 +93,11 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                         duration: const Duration(milliseconds: 150),
                         scale: currCarouselPage == index ? 1 : 0.90,
                         child: FlipCard(
-                          animationDuration: const Duration(milliseconds: 250),
+                          speed: 250,
                           controller: flipCon,
-                          rotateSide: RotateSide.bottom,
-                          axis: FlipAxis.horizontal,
-                          onTapFlipping: true,
-                          frontWidget: TestExpandButton(
+                          direction: FlipDirection.VERTICAL,
+                          side: CardSide.BACK,
+                          back: TestExpandButton(
                             questionKeys: widget.questionKeys,
                             card: Container(
                               decoration: BoxDecoration(
@@ -128,7 +128,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
                               ),
                             ),
                           ),
-                          backWidget: TestExpandButton(
+                          front: TestExpandButton(
                             questionKeys: widget.questionKeys,
                             card: Container(
                               decoration: BoxDecoration(
@@ -205,20 +205,30 @@ class TestExpandButton extends StatelessWidget {
         card,
         Container(
           alignment: Alignment.bottomRight,
-          padding: const EdgeInsets.only(bottom: 6, right: 12),
-          child: IconButton(
-            iconSize: 30,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (BuildContext context) {
-                  return TestScreen(questionKeys: questionKeys);
-                }),
-              );
-            },
-            icon: Icon(
-              Icons.fullscreen_rounded,
-              color: themeColor[800],
+          padding: const EdgeInsets.only(bottom: 18, right: 18),
+          child: Container(
+            alignment: Alignment.center,
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(
+              color: themeColor[200],
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              iconSize: 35,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return TestScreen(questionKeys: questionKeys);
+                  }),
+                );
+              },
+              icon: Icon(
+                Icons.fullscreen_rounded,
+                color: themeColor[800],
+              ),
             ),
           ),
         ),

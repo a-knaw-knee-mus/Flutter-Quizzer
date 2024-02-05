@@ -1,5 +1,6 @@
+import 'package:flip_card/flip_card.dart';
+import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
-import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/schema/question.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
@@ -31,8 +32,10 @@ class _TestScreenState extends State<TestScreen> {
   List know = []; // store keys of questions you know
   List dontKnow = []; // store keys of questions you don't know
   List prevQuestionKeyList = [];
-  List shuffledIndexList = [];
+  List shuffledQuestionKeys = [];
   bool testDone = false;
+  final GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
+  FlipCardController flipCon = FlipCardController();
 
   void toggleSorting(bool val) {
     setState(() {
@@ -101,7 +104,7 @@ class _TestScreenState extends State<TestScreen> {
       know.clear();
       dontKnow.clear();
       prevQuestionKeyList = [];
-      shuffledIndexList.shuffle();
+      shuffledQuestionKeys.shuffle();
     });
   }
 
@@ -111,17 +114,18 @@ class _TestScreenState extends State<TestScreen> {
       know.clear();
       dontKnow.clear();
       prevQuestionKeyList = [];
-      shuffledIndexList.clear();
+      shuffledQuestionKeys.clear();
       for (int i = 0; i < widget.questionKeys.length; i++) {
-        shuffledIndexList.add(i);
+        shuffledQuestionKeys.add(widget.questionKeys[i]);
       }
     });
   }
 
   @override
   void initState() {
+    // originally starts unshuffled, and becomes shuffled if needed
     for (int i = 0; i < widget.questionKeys.length; i++) {
-      shuffledIndexList.add(i);
+      shuffledQuestionKeys.add(widget.questionKeys[i]);
     }
     super.initState();
   }
@@ -130,31 +134,23 @@ class _TestScreenState extends State<TestScreen> {
   Widget build(BuildContext context) {
     MaterialColor themeColor =
         context.watch<ColorProvider>().color.getColorSwatch();
-    FlipCardController flipCon = FlipCardController();
 
-    List filteredKeys = widget.questionKeys.where((key) {
+    List filteredKeys = shuffledQuestionKeys.where((key) {
       Question q = questionBox.get(key)!;
       if (!starredOnly) return true;
       if (starredOnly && q.isStarred) return true;
       return false;
     }).toList();
+    // at this point keys are filtered on if starred only or not, and shuffled if needed
 
-    // shuffle cards
-    List shuffledIndexListFiltered = shuffledIndexList.where(
-      (index) {
-        if (index >= filteredKeys.length) return false;
-        return true;
-      },
-    ).toList();
-    List questions = filteredKeys.map((key) {
-      return questionBox.get(key);
+    List<Question> questions = filteredKeys.map((key) {
+      return questionBox.get(key)!;
     }).toList();
-    List numbers = shuffledIndexListFiltered;
-    final Map<int, Question> mappings = {
-      for (int i = 0; i < numbers.length; i++) numbers[i]: questions[i]
-    };
-    numbers.sort();
-    questions = [for (int number in numbers) mappings[number]];
+
+    // Flips the card back to its preferred side depending on if the user wants to see the term or definition first
+    if (cardKey.currentState != null && cardKey.currentState!.isFront) {
+      flipCon.toggleCardWithoutAnimation();
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -205,6 +201,7 @@ class _TestScreenState extends State<TestScreen> {
             ? Column(
                 children: [
                   TweenAnimationBuilder<double>(
+                    // progress bar
                     duration: const Duration(milliseconds: 150),
                     curve: Curves.easeInOut,
                     tween: Tween<double>(
@@ -220,6 +217,7 @@ class _TestScreenState extends State<TestScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Visibility(
+                                // solved problems tracking
                                 visible: sorting ? true : false,
                                 maintainSize: false,
                                 child: Row(
@@ -280,19 +278,20 @@ class _TestScreenState extends State<TestScreen> {
                               Column(
                                 children: [
                                   Container(
+                                    // question stack
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     height: 500,
                                     width: 320,
                                     child: FlipCard(
-                                      animationDuration:
-                                          const Duration(milliseconds: 250),
+                                      key: cardKey,
+                                      speed: 250,
                                       controller: flipCon,
-                                      rotateSide: RotateSide.bottom,
-                                      axis: FlipAxis.horizontal,
-                                      onTapFlipping: true,
-                                      frontWidget: ProgressButtonOverlays(
+                                      side: CardSide.BACK,
+                                      direction: FlipDirection.VERTICAL,
+                                      // set back as starting side so flipping animation flips from the bottom
+                                      back: ProgressButtonOverlays(
                                         questionKey:
                                             filteredKeys[currCardIndex],
                                         sorting: sorting,
@@ -322,12 +321,11 @@ class _TestScreenState extends State<TestScreen> {
                                                           .term
                                                       : questions[currCardIndex]
                                                           .definition,
+                                                  textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                     fontSize: 30,
                                                     color: themeColor[800],
-                                                    fontWeight: termStart
-                                                        ? FontWeight.w600
-                                                        : FontWeight.w400,
+                                                    fontWeight: FontWeight.w600,
                                                   ),
                                                 ),
                                               ),
@@ -335,7 +333,7 @@ class _TestScreenState extends State<TestScreen> {
                                           ),
                                         ),
                                       ),
-                                      backWidget: ProgressButtonOverlays(
+                                      front: ProgressButtonOverlays(
                                         questionKey:
                                             filteredKeys[currCardIndex],
                                         sorting: sorting,
@@ -366,12 +364,11 @@ class _TestScreenState extends State<TestScreen> {
                                                           .term
                                                       : questions[currCardIndex]
                                                           .definition,
+                                                  textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                     fontSize: 30,
                                                     color: themeColor[800],
-                                                    fontWeight: !termStart
-                                                        ? FontWeight.w600
-                                                        : FontWeight.w400,
+                                                    fontWeight: FontWeight.w400,
                                                   ),
                                                 ),
                                               ),
@@ -382,6 +379,7 @@ class _TestScreenState extends State<TestScreen> {
                                     ),
                                   ),
                                   Visibility(
+                                    // previous question button
                                     maintainInteractivity: false,
                                     visible: currCardIndex > 0 ? true : false,
                                     maintainSize: true,
