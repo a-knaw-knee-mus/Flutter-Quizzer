@@ -17,7 +17,6 @@ class TestSettingsDialog extends StatefulWidget {
   final bool sorting;
   final bool termStart;
   final bool starredOnly;
-  final VoidCallback restartTest;
   final void Function(bool) toggleSorting;
   final void Function(bool) setTermStart;
   final void Function(bool) setStarredOnly;
@@ -28,7 +27,6 @@ class TestSettingsDialog extends StatefulWidget {
     required this.sorting,
     required this.termStart,
     required this.starredOnly,
-    required this.restartTest,
     required this.toggleSorting,
     required this.setTermStart,
     required this.setStarredOnly,
@@ -57,11 +55,11 @@ class _TestSettingsDialogState extends State<TestSettingsDialog> {
 
     return Container(
       color: themeColor[200],
-      height: 400,
+      height: 320,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
               'Options',
@@ -171,8 +169,8 @@ class _TestSettingsDialogState extends State<TestSettingsDialog> {
             ),
             GestureDetector(
               onTap: () {
-                widget.shuffleTerms();
                 Navigator.pop(context);
+                widget.shuffleTerms();
               },
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -183,19 +181,6 @@ class _TestSettingsDialogState extends State<TestSettingsDialog> {
                   ),
                   Icon(Icons.shuffle_rounded),
                 ],
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                widget.restartTest();
-                Navigator.pop(context);
-              },
-              child: const Text(
-                'Reset Flashcards',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
             ),
           ],

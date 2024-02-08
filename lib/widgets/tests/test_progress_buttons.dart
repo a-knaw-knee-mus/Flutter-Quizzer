@@ -1,3 +1,4 @@
+import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/util/color_types.dart';
@@ -7,9 +8,9 @@ class ProgressButtonOverlays extends StatelessWidget {
   final Widget child;
   final bool sorting;
   final String questionKey;
+  final AppinioSwiperController stackCon;
   final void Function(String) knowQuestion;
   final void Function(String) dontKnowQuestion;
-  final void Function(String) nextQuestion;
 
   const ProgressButtonOverlays({
     super.key,
@@ -18,7 +19,7 @@ class ProgressButtonOverlays extends StatelessWidget {
     required this.questionKey,
     required this.knowQuestion,
     required this.dontKnowQuestion,
-    required this.nextQuestion,
+    required this.stackCon,
   });
 
   @override
@@ -42,13 +43,7 @@ class ProgressButtonOverlays extends StatelessWidget {
             child: IconButton(
               padding: EdgeInsets.zero,
               iconSize: 40,
-              onPressed: () {
-                if (sorting) {
-                  knowQuestion(questionKey);
-                } else {
-                  nextQuestion(questionKey);
-                }
-              },
+              onPressed: stackCon.swipeRight,
               icon: Icon(
                 Icons.check_rounded,
                 color: themeColor[800],
@@ -70,9 +65,7 @@ class ProgressButtonOverlays extends StatelessWidget {
                   child: IconButton(
                     padding: EdgeInsets.zero,
                     iconSize: 40,
-                    onPressed: () {
-                      dontKnowQuestion(questionKey);
-                    },
+                    onPressed: stackCon.swipeLeft,
                     icon: Icon(
                       Icons.close_rounded,
                       color: themeColor[800],

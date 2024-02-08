@@ -1,5 +1,4 @@
 import 'package:flip_card/flip_card.dart';
-import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_quizzer/main.dart';
 import 'package:flutter_quizzer/schema/question.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_quizzer/widgets/tests/test_summary.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:appinio_swiper/appinio_swiper.dart';
 
 class TestScreen extends StatefulWidget {
   final List questionKeys;
@@ -31,11 +31,8 @@ class _TestScreenState extends State<TestScreen> {
   int currCardIndex = 0;
   List know = []; // store keys of questions you know
   List dontKnow = []; // store keys of questions you don't know
-  List prevQuestionKeyList = [];
-  List shuffledQuestionKeys = [];
-  bool testDone = false;
-  final GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
-  FlipCardController flipCon = FlipCardController();
+  List prevQuestionKeyList = []; // stored answered questions in a stack for undo
+  AppinioSwiperController stackCon = AppinioSwiperController();
 
   void toggleSorting(bool val) {
     setState(() {
@@ -79,13 +76,6 @@ class _TestScreenState extends State<TestScreen> {
     });
   }
 
-  void nextQuestion(String key) {
-    setState(() {
-      prevQuestionKeyList.add(key);
-      currCardIndex++;
-    });
-  }
-
   void previousQuestion() {
     if (know.isNotEmpty && know.last == prevQuestionKeyList.last) {
       know.removeLast();
@@ -95,39 +85,20 @@ class _TestScreenState extends State<TestScreen> {
     }
     prevQuestionKeyList.removeLast();
     currCardIndex--;
+    stackCon.unswipe();
     setState(() {});
   }
 
   void shuffleTerms() {
-    setState(() {
-      currCardIndex = 0;
-      know.clear();
-      dontKnow.clear();
-      prevQuestionKeyList = [];
-      shuffledQuestionKeys.shuffle();
-    });
-  }
-
-  void restartTest() {
-    setState(() {
-      currCardIndex = 0;
-      know.clear();
-      dontKnow.clear();
-      prevQuestionKeyList = [];
-      shuffledQuestionKeys.clear();
-      for (int i = 0; i < widget.questionKeys.length; i++) {
-        shuffledQuestionKeys.add(widget.questionKeys[i]);
-      }
-    });
-  }
-
-  @override
-  void initState() {
-    // originally starts unshuffled, and becomes shuffled if needed
-    for (int i = 0; i < widget.questionKeys.length; i++) {
-      shuffledQuestionKeys.add(widget.questionKeys[i]);
-    }
-    super.initState();
+    // shuffle the cards and send these shuffled cards to a new duplicate test page
+    widget.questionKeys.shuffle();
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => TestScreen(
+          questionKeys: widget.questionKeys,
+        ),
+      ),
+    );
   }
 
   @override
@@ -135,7 +106,7 @@ class _TestScreenState extends State<TestScreen> {
     MaterialColor themeColor =
         context.watch<ColorProvider>().color.getColorSwatch();
 
-    List filteredKeys = shuffledQuestionKeys.where((key) {
+    List filteredKeys = widget.questionKeys.where((key) {
       Question q = questionBox.get(key)!;
       if (!starredOnly) return true;
       if (starredOnly && q.isStarred) return true;
@@ -146,11 +117,6 @@ class _TestScreenState extends State<TestScreen> {
     List<Question> questions = filteredKeys.map((key) {
       return questionBox.get(key)!;
     }).toList();
-
-    // Flips the card back to its preferred side depending on if the user wants to see the term or definition first
-    if (cardKey.currentState != null && cardKey.currentState!.isFront) {
-      flipCon.toggleCardWithoutAnimation();
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -163,7 +129,7 @@ class _TestScreenState extends State<TestScreen> {
         ),
         title: Text(
           filteredKeys.isNotEmpty
-              ? '${currCardIndex != filteredKeys.length ? (currCardIndex + 1) : (currCardIndex)}/${questions.length}'
+              ? '${starredOnly ? 'Starred ' : ''} ${currCardIndex != filteredKeys.length ? (currCardIndex) : (currCardIndex)}/${questions.length}'
               : 'No starred terms',
           style: const TextStyle(
             fontSize: 22,
@@ -181,7 +147,6 @@ class _TestScreenState extends State<TestScreen> {
                     sorting: sorting,
                     starredOnly: starredOnly,
                     termStart: termStart,
-                    restartTest: restartTest,
                     toggleSorting: toggleSorting,
                     setTermStart: setTermStart,
                     setStarredOnly: setStarredOnly,
@@ -277,105 +242,153 @@ class _TestScreenState extends State<TestScreen> {
                               ),
                               Column(
                                 children: [
-                                  Container(
-                                    // question stack
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
+                                  SizedBox(
                                     height: 500,
                                     width: 320,
-                                    child: FlipCard(
-                                      key: cardKey,
-                                      speed: 250,
-                                      controller: flipCon,
-                                      side: CardSide.BACK,
-                                      direction: FlipDirection.VERTICAL,
-                                      // set back as starting side so flipping animation flips from the bottom
-                                      back: ProgressButtonOverlays(
-                                        questionKey:
-                                            filteredKeys[currCardIndex],
-                                        sorting: sorting,
-                                        knowQuestion: knowQuestion,
-                                        dontKnowQuestion: dontKnowQuestion,
-                                        nextQuestion: nextQuestion,
-                                        child: Container(
+                                    child: AppinioSwiper(
+                                      controller: stackCon,
+                                      cardCount: questions.length,
+                                      swipeOptions: SwipeOptions.only(
+                                        up: false,
+                                        down: false,
+                                        left: sorting, // allow left swipe while sorting to allow 'don't know'
+                                        right: true,
+                                      ),
+                                      onSwipeEnd: (int previousIndex,
+                                          int _,
+                                          SwiperActivity activity) {
+                                        switch (activity) {
+                                          case Swipe():
+                                            if (activity.direction ==
+                                                AxisDirection.right) {
+                                              knowQuestion(
+                                                  filteredKeys[previousIndex]);
+                                            } else if (activity.direction ==
+                                                AxisDirection.left) {
+                                              dontKnowQuestion(
+                                                  filteredKeys[previousIndex]);
+                                            }
+                                            break;
+                                          default:
+                                            break;
+                                        }
+                                      },
+                                      cardBuilder:
+                                          (BuildContext context, int index) {
+                                        return Container(
+                                          // question stack
                                           decoration: BoxDecoration(
                                             borderRadius:
-                                                BorderRadius.circular(16),
-                                            border: Border.all(
-                                                color: themeColor[700]!,
-                                                width: 1.5),
-                                            color: themeColor[200],
+                                                BorderRadius.circular(20),
                                           ),
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 4),
-                                          child: Center(
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.vertical,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(15.0),
-                                                child: Text(
-                                                  termStart
-                                                      ? questions[currCardIndex]
-                                                          .term
-                                                      : questions[currCardIndex]
-                                                          .definition,
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontSize: 30,
-                                                    color: themeColor[800],
-                                                    fontWeight: FontWeight.w600,
+                                          child: FlipCard(
+                                            key: GlobalKey(),
+                                            speed: 250,
+                                            side: CardSide.BACK,
+                                            direction: FlipDirection.VERTICAL,
+                                            // set back as starting side so flipping animation flips from the bottom
+                                            back: ProgressButtonOverlays(
+                                              stackCon: stackCon,
+                                              questionKey: filteredKeys[index],
+                                              sorting: sorting,
+                                              knowQuestion: knowQuestion,
+                                              dontKnowQuestion:
+                                                  dontKnowQuestion,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                  border: Border.all(
+                                                      color: themeColor[700]!,
+                                                      width: 1.5),
+                                                  color: themeColor[200],
+                                                ),
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 4),
+                                                child: Center(
+                                                  child: SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              15.0),
+                                                      child: Text(
+                                                        termStart
+                                                            ? questions[index]
+                                                                .term
+                                                            : questions[index]
+                                                                .definition,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 30,
+                                                          color:
+                                                              themeColor[800],
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            front: ProgressButtonOverlays(
+                                              stackCon: stackCon,
+                                              questionKey: filteredKeys[index],
+                                              sorting: sorting,
+                                              knowQuestion: knowQuestion,
+                                              dontKnowQuestion:
+                                                  dontKnowQuestion,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                  border: Border.all(
+                                                    color: themeColor[700]!,
+                                                    width: 1.5,
+                                                  ),
+                                                  color: themeColor[200],
+                                                ),
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 4),
+                                                child: Center(
+                                                  child: SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              15.0),
+                                                      child: Text(
+                                                        !termStart
+                                                            ? questions[index]
+                                                                .term
+                                                            : questions[index]
+                                                                .definition,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 30,
+                                                          color:
+                                                              themeColor[800],
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      front: ProgressButtonOverlays(
-                                        questionKey:
-                                            filteredKeys[currCardIndex],
-                                        sorting: sorting,
-                                        knowQuestion: knowQuestion,
-                                        dontKnowQuestion: dontKnowQuestion,
-                                        nextQuestion: nextQuestion,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                            border: Border.all(
-                                              color: themeColor[700]!,
-                                              width: 1.5,
-                                            ),
-                                            color: themeColor[200],
-                                          ),
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 4),
-                                          child: Center(
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.vertical,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(15.0),
-                                                child: Text(
-                                                  !termStart
-                                                      ? questions[currCardIndex]
-                                                          .term
-                                                      : questions[currCardIndex]
-                                                          .definition,
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontSize: 30,
-                                                    color: themeColor[800],
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                        );
+                                      },
                                     ),
                                   ),
                                   Visibility(
